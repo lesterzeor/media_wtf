@@ -4,21 +4,7 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: __dirname,
   },
-  /** Allow embedding the site in Contentful’s Live Preview iframe (side-by-side editing). */
-  async headers() {
-    return [
-      {
-        source: "/:path*",
-        headers: [
-          {
-            key: "Content-Security-Policy",
-            value:
-              "frame-ancestors 'self' https://app.contentful.com https://app.eu.contentful.com",
-          },
-        ],
-      },
-    ];
-  },
+  /** CSP `frame-ancestors` for Contentful Live Preview is set in `src/middleware.ts` (also strips `X-Frame-Options`). */
   images: {
     remotePatterns: [
       {
