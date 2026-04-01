@@ -1,0 +1,44 @@
+{
+  "name": "media_wtf",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "codegen": "graphql-codegen --config codegen.ts",
+    "codegen:watch": "graphql-codegen --config codegen.ts --watch",
+    "predev": "npm run codegen",
+    "prebuild": "npm run codegen",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "contentful:sync-home-model": "tsx scripts/ensure-home-content-type.ts"
+  },
+  "dependencies": {
+    "@analytics/google-tag-manager": "^0.6.0",
+    "@contentful/live-preview": "^4.9.12",
+    "@contentful/rich-text-react-renderer": "^16.1.6",
+    "clsx": "^2.1.1",
+    "firebase": "^12.11.0",
+    "graphql": "^16.13.2",
+    "graphql-request": "^7.4.0",
+    "next": "16.2.2",
+    "react": "19.2.4",
+    "react-dom": "19.2.4"
+  },
+  "devDependencies": {
+    "@graphql-codegen/cli": "^6.1.1",
+    "@graphql-codegen/client-preset": "^5.2.2",
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "contentful-management": "^12.2.0",
+    "dotenv": "^17.3.1",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.2",
+    "tailwindcss": "^4",
+    "tsx": "^4.21.0",
+    "typescript": "^5"
+  }
+}

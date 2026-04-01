@@ -1,0 +1,34 @@
+@import "tailwindcss";
+
+html {
+  color-scheme: light;
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  /** Site primary (accents, links, highlights) */
+  --brand-primary: #17b009;
+  --brand-teal: #17b009;
+  --brand-navy: #1e3a5f;
+  --brand-crimson: #17b009;
+  --brand-purple: #4b306a;
+  --brand-pink: #db2777;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  /** Semantic tokens — use `bg-brand-primary`, `text-brand-primary`, `ring-brand-primary`, etc. */
+  --color-brand-primary: var(--brand-primary);
+  --color-brand-navy: var(--brand-navy);
+  --font-sans: var(--font-oswald), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono);
+  --font-serif: var(--font-merriweather), Georgia, "Times New Roman", serif;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-oswald), sans-serif;
+}

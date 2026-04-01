@@ -1,0 +1,122 @@
+# GraphQL operations for the default article content type (`article` → `Article`, `articleCollection`).
+# If you use a different content type ID, update these documents to match your Contentful schema
+# (collection field name, GraphQL type name, and fragment target type).
+
+fragment ArticleCardFields on Article {
+  sys {
+    id
+    publishedAt
+  }
+  title
+  slug
+  excerpt
+  author {
+    ... on Author {
+      sys {
+        id
+      }
+      name
+    }
+  }
+  heroImage {
+    url
+    width
+    height
+    title
+    description
+  }
+  categories {
+    ... on Category {
+      sys {
+        id
+      }
+      name
+      slug
+    }
+  }
+}
+
+query GetArticles($limit: Int = 12, $skip: Int = 0, $preview: Boolean = false) {
+  articleCollection(
+    limit: $limit
+    skip: $skip
+    order: sys_publishedAt_DESC
+    preview: $preview
+  ) {
+    items {
+      ...ArticleCardFields
+      body {
+        json
+      }
+    }
+  }
+}
+
+query GetArticleBySlug($slug: String!, $preview: Boolean = false) {
+  articleCollection(limit: 1, where: { slug: $slug }, preview: $preview) {
+    items {
+      ...ArticleCardFields
+      body {
+        json
+      }
+    }
+  }
+}
+
+query GetArticleSlugs($limit: Int = 200) {
+  articleCollection(limit: $limit) {
+    items {
+      slug
+    }
+  }
+}
+
+query GetHome($preview: Boolean = false) {
+  homeCollection(limit: 1, preview: $preview) {
+    items {
+      sys {
+        id
+      }
+      internalTitle
+      featuredMediaArticlesCollection(limit: 10) {
+        items {
+          ... on Article {
+            ...ArticleCardFields
+          }
+        }
+      }
+      heroArticle {
+        ... on Article {
+          ...ArticleCardFields
+        }
+      }
+      todaysHighlightsCollection(limit: 15) {
+        items {
+          ... on Article {
+            ...ArticleCardFields
+          }
+        }
+      }
+      recommendedArticle {
+        ... on Article {
+          ...ArticleCardFields
+        }
+      }
+      educationArticlesCollection(limit: 15) {
+        items {
+          ... on Article {
+            ...ArticleCardFields
+          }
+        }
+      }
+      # Single-reference "Hot article" is exposed as a collection in Contentful GraphQL (not `hotArticle`).
+      hotArticleCollection(limit: 1) {
+        items {
+          ... on Article {
+            ...ArticleCardFields
+          }
+        }
+      }
+    }
+  }
+}
