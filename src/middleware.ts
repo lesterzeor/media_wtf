@@ -4,7 +4,12 @@ import { NextResponse } from "next/server";
 /**
  * Contentful Live Preview loads your site in an iframe from `app.contentful.com`.
  * - `frame-ancestors` must allow those origins (CSP).
- * - `X-Frame-Options: SAMEORIGIN` (often added by hosts/CDNs) blocks cross-origin embedding — we remove it.
+ * - We try to delete `X-Frame-Options` because `SAMEORIGIN` / `DENY` blocks cross-origin embedding.
+ *
+ * If `curl -sI https://yoursite/ | grep -i x-frame` still shows `DENY`, the header is being added
+ * *after* this middleware (common: Vercel **Deployment Protection** / password gate, or Cloudflare).
+ * Fix: turn off deployment protection for the preview hostname, or strip the header in that product’s rules.
+ * CSP `frame-ancestors` alone is not enough when `X-Frame-Options: DENY` is present.
  *
  * @see https://www.contentful.com/developers/docs/tutorials/preview/live-preview/
  */
