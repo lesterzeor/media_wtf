@@ -1,3 +1,5 @@
+import { encodeGraphQLResponse } from "@contentful/live-preview";
+import { print } from "graphql";
 import { draftMode } from "next/headers";
 import {
   GetArticleBySlugDocument,
@@ -48,19 +50,52 @@ export async function getArticleBySlug(slug: string): Promise<Article | null> {
   return mapArticle(first);
 }
 
-/** Raw GraphQL result for Live Preview (`useContentfulLiveUpdates` needs this + `GetArticleBySlugDocument`). */
+/**
+ * Raw GraphQL for Live Preview. For draft mode we use `rawRequest` so `extensions` (Content Source Maps)
+ * are available, then `encodeGraphQLResponse` so `useContentfulLiveUpdates` can merge edits.
+ * Without `@contentSourceMaps` + encode, the SDK cannot wire fields and you must refresh manually.
+ * Content Source Maps require a Contentful **Premium** plan.
+ */
 export async function getArticleBySlugQuery(slug: string): Promise<GetArticleBySlugQuery | null> {
   const { isEnabled } = await draftMode();
   const client = getContentfulClient(isEnabled);
-  const data = await client.request(GetArticleBySlugDocument, {
-    slug,
-    preview: isEnabled,
+
+  if (!isEnabled) {
+    const data = await client.request(GetArticleBySlugDocument, {
+      slug,
+      preview: false,
+    });
+    const first = articleItemsFromSlugQuery(data)[0];
+    return first ? data : null;
+  }
+
+  const response = await client.rawRequest({
+    query: print(GetArticleBySlugDocument),
+    variables: {
+      slug,
+      preview: true,
+    },
   });
-  const first = articleItemsFromSlugQuery(data)[0];
+
+  const data = response.data as GetArticleBySlugQuery | undefined;
+  const first = data?.articleCollection?.items?.[0];
   if (!first) {
     return null;
   }
-  return data;
+
+  if (response.extensions != null && data != null) {
+    try {
+      const encoded = encodeGraphQLResponse({
+        data,
+        extensions: response.extensions,
+      });
+      return encoded.data as GetArticleBySlugQuery;
+    } catch {
+      // Encoding failed (e.g. missing maps) — fall back to raw data; live updates may not work.
+    }
+  }
+
+  return data as GetArticleBySlugQuery;
 }
 
 export async function getArticleSlugs(): Promise<string[]> {

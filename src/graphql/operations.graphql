@@ -3,6 +3,7 @@
 # (collection field name, GraphQL type name, and fragment target type).
 
 fragment ArticleCardFields on Article {
+  __typename
   sys {
     id
     publishedAt
@@ -52,7 +53,8 @@ query GetArticles($limit: Int = 12, $skip: Int = 0, $preview: Boolean = false) {
   }
 }
 
-query GetArticleBySlug($slug: String!, $preview: Boolean = false) {
+# @contentSourceMaps: required for Live Preview “live updates” with GraphQL (see encodeGraphQLResponse). Premium plan.
+query GetArticleBySlug($slug: String!, $preview: Boolean = false) @contentSourceMaps {
   articleCollection(limit: 1, where: { slug: $slug }, preview: $preview) {
     items {
       ...ArticleCardFields
