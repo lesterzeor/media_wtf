@@ -31,7 +31,16 @@ Use this file to track deferred work mentioned in planning or reviews. **Update 
 
 - **Context:** Home singleton fields include `mustSeeArticles`, `hotArticle`, `recommendedSidebarArticles`, `trendingArticles`, plus hero/highlights/education/legacy recommended.
 - **TODO:** After model changes, run `npm run contentful:sync-home-model`, fill the Home entry in the UI, publish, then `npm run codegen` if GraphQL shape changes.
-- **TODO:** If `src/graphql/schema-home-fields.graphql` conflicts with your space schema after sync, remove or trim the extension file per `codegen.ts` comments.
+
+### Live Preview & live updates (deferred — revisit later)
+
+- **Context:** Draft mode routes (`/api/draft`, `/api/disable-draft`), `ContentfulLivePreviewRoot`, `PreviewModeBanner`, iframe CSP/`middleware.ts` (strip `X-Frame-Options` + `frame-ancestors`). **Article** preview uses `GetArticleBySlugLivePreview` (`@contentSourceMaps`) + `rawRequest` + `encodeGraphQLResponse` + `useContentfulLiveUpdates` in `ArticlePageClient`. **Split queries:** `GetArticleBySlug` has no CSM (build + `preview: false`); `GetArticleBySlugLivePreview` is preview-only so Vercel build does not fail.
+- **Still not satisfactory:** Live updates in the Contentful side-by-side iframe may require refresh; Content Source Maps need **Premium**-tier features; hosting may still inject `X-Frame-Options: DENY` (disable Deployment Protection / strip at CDN). **Home page** does not yet use `useContentfulLiveUpdates` + `GetHomeDocument`.
+- **TODO (pick up later):**
+  - Verify browser console for “Content Source Maps” / SDK errors in preview.
+  - Confirm space plan + preview token; test `encodeGraphQLResponse` path end-to-end.
+  - Optional: home route client wrapper + `GetHome` CSM query (or accept refresh-only for home).
+  - Document operational fixes (Vercel protection, Cloudflare) in README or this file when stable.
 
 ---
 
