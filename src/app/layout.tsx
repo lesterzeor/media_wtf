@@ -4,6 +4,7 @@ import { Geist_Mono, Merriweather, Oswald } from "next/font/google";
 import { ContentfulLivePreviewRoot } from "@/components/contentful/ContentfulLivePreviewRoot";
 import { PreviewModeBanner } from "@/components/contentful/PreviewModeBanner";
 import { MainLayout } from "@/components/layout/MainLayout";
+import { AdSenseScript } from "@/lib/ads/AdSenseScript";
 import { GooglePublisherTag } from "@/lib/ads/GooglePublisherTag";
 import { GoogleTagManager } from "@/lib/analytics/GoogleTagManager";
 import "./globals.css";
@@ -54,6 +55,7 @@ export default async function RootLayout({
           locale={contentfulLocale}
         >
           <GoogleTagManager />
+          <AdSenseScript />
           <GooglePublisherTag />
           <MainLayout>{children}</MainLayout>
         </ContentfulLivePreviewRoot>

@@ -12,6 +12,12 @@ export type Category = {
   slug: string;
 };
 
+/** Contentful rich text from GraphQL: `body { json links { ... } }`. */
+export type ArticleBodyRichText = {
+  json: unknown;
+  links?: unknown;
+};
+
 export type Article = {
   id: string;
   slug: string;
@@ -21,7 +27,8 @@ export type Article = {
   author?: string;
   publishedAt?: string;
   heroImage?: ContentImage;
-  body?: unknown;
+  /** Rich text document + link resolution data, or a legacy plain document object. */
+  body?: ArticleBodyRichText | unknown;
   categories: Category[];
 };
 

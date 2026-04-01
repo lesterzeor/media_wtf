@@ -37,6 +37,69 @@ fragment ArticleCardFields on Article {
   }
 }
 
+# Rich text: `json` alone does not resolve embedded assets/entries — include `links` for the React renderer.
+fragment ArticleBodyFields on ArticleBody {
+  json
+  links {
+    assets {
+      block {
+        sys {
+          id
+        }
+        url
+        title
+        description
+        width
+        height
+        contentType
+      }
+      hyperlink {
+        sys {
+          id
+        }
+        url
+        title
+        description
+        width
+        height
+        contentType
+      }
+    }
+    entries {
+      block {
+        __typename
+        sys {
+          id
+        }
+        ... on Article {
+          title
+          slug
+        }
+      }
+      hyperlink {
+        __typename
+        sys {
+          id
+        }
+        ... on Article {
+          title
+          slug
+        }
+      }
+      inline {
+        __typename
+        sys {
+          id
+        }
+        ... on Article {
+          title
+          slug
+        }
+      }
+    }
+  }
+}
+
 query GetArticles($limit: Int = 12, $skip: Int = 0, $preview: Boolean = false) {
   articleCollection(
     limit: $limit
@@ -58,7 +121,7 @@ query GetArticleBySlug($slug: String!, $preview: Boolean = false) {
     items {
       ...ArticleCardFields
       body {
-        json
+        ...ArticleBodyFields
       }
     }
   }
@@ -70,7 +133,7 @@ query GetArticleBySlugLivePreview($slug: String!) @contentSourceMaps {
     items {
       ...ArticleCardFields
       body {
-        json
+        ...ArticleBodyFields
       }
     }
   }

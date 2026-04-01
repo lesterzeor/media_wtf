@@ -18,7 +18,7 @@ type RawArticle = {
   slug?: string;
   excerpt?: string;
   author?: RawAuthorRef | string | null;
-  body?: { json?: unknown };
+  body?: { json?: unknown; links?: unknown };
   heroImage?: {
     url?: string;
     width?: number;
@@ -122,7 +122,10 @@ export function mapArticle(raw: RawArticle | null | undefined): Article | null {
     excerpt: raw.excerpt,
     ...(author ? { author } : {}),
     publishedAt: raw.sys.publishedAt,
-    body: raw.body?.json,
+    body:
+      raw.body?.json != null
+        ? { json: raw.body.json, ...(raw.body.links != null ? { links: raw.body.links } : {}) }
+        : undefined,
     heroImage: raw.heroImage?.url
       ? {
           url: raw.heroImage.url,

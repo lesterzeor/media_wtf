@@ -1,6 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  /** Exposes `VERCEL_ENV` to the client as `NEXT_PUBLIC_VERCEL_ENV` (ads: real vs test). */
+  env: {
+    NEXT_PUBLIC_VERCEL_ENV: process.env.VERCEL_ENV ?? "development",
+  },
   turbopack: {
     root: __dirname,
   },
