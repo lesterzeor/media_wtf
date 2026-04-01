@@ -13,7 +13,9 @@ import { NextResponse } from "next/server";
  *
  * @see https://www.contentful.com/developers/docs/tutorials/preview/live-preview/
  */
-export function middleware(_: NextRequest) {
+export function middleware(_request: NextRequest) {
+  // Next.js requires the argument; we only set response headers.
+  void _request;
   const res = NextResponse.next();
 
   res.headers.set(

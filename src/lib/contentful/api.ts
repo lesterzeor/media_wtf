@@ -48,6 +48,21 @@ export async function getArticleBySlug(slug: string): Promise<Article | null> {
   return mapArticle(first);
 }
 
+/** Raw GraphQL result for Live Preview (`useContentfulLiveUpdates` needs this + `GetArticleBySlugDocument`). */
+export async function getArticleBySlugQuery(slug: string): Promise<GetArticleBySlugQuery | null> {
+  const { isEnabled } = await draftMode();
+  const client = getContentfulClient(isEnabled);
+  const data = await client.request(GetArticleBySlugDocument, {
+    slug,
+    preview: isEnabled,
+  });
+  const first = articleItemsFromSlugQuery(data)[0];
+  if (!first) {
+    return null;
+  }
+  return data;
+}
+
 export async function getArticleSlugs(): Promise<string[]> {
   const client = getContentfulClient(false);
   const data = await client.request(GetArticleSlugsDocument, {});
