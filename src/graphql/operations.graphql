@@ -1,0 +1,198 @@
+# GraphQL operations for the default article content type (`article` → `Article`, `articleCollection`).
+# If you use a different content type ID, update these documents to match your Contentful schema
+# (collection field name, GraphQL type name, and fragment target type).
+
+fragment ArticleCardFields on Article {
+  __typename
+  sys {
+    id
+    publishedAt
+  }
+  title
+  slug
+  excerpt
+  author {
+    ... on Author {
+      sys {
+        id
+      }
+      name
+    }
+  }
+  heroImage {
+    url
+    width
+    height
+    title
+    description
+  }
+  categories {
+    ... on Category {
+      sys {
+        id
+      }
+      name
+      slug
+    }
+  }
+}
+
+# Rich text: `json` alone does not resolve embedded assets/entries — include `links` for the React renderer.
+fragment ArticleBodyFields on ArticleBody {
+  json
+  links {
+    assets {
+      block {
+        sys {
+          id
+        }
+        url
+        title
+        description
+        width
+        height
+        contentType
+      }
+      hyperlink {
+        sys {
+          id
+        }
+        url
+        title
+        description
+        width
+        height
+        contentType
+      }
+    }
+    entries {
+      block {
+        __typename
+        sys {
+          id
+        }
+        ... on Article {
+          title
+          slug
+        }
+      }
+      hyperlink {
+        __typename
+        sys {
+          id
+        }
+        ... on Article {
+          title
+          slug
+        }
+      }
+      inline {
+        __typename
+        sys {
+          id
+        }
+        ... on Article {
+          title
+          slug
+        }
+      }
+    }
+  }
+}
+
+query GetArticles($limit: Int = 12, $skip: Int = 0, $preview: Boolean = false) {
+  articleCollection(
+    limit: $limit
+    skip: $skip
+    order: sys_publishedAt_DESC
+    preview: $preview
+  ) {
+    items {
+      ...ArticleCardFields
+      body {
+        json
+      }
+    }
+  }
+}
+
+query GetArticleBySlug($slug: String!, $preview: Boolean = false) {
+  articleCollection(limit: 1, where: { slug: $slug }, preview: $preview) {
+    items {
+      ...ArticleCardFields
+      body {
+        ...ArticleBodyFields
+      }
+    }
+  }
+}
+
+# Same fields as GetArticleBySlug but with Content Source Maps — **preview: true only** (delivery API rejects CSM + preview:false). Used for live updates in draft mode.
+query GetArticleBySlugLivePreview($slug: String!) @contentSourceMaps {
+  articleCollection(limit: 1, where: { slug: $slug }, preview: true) {
+    items {
+      ...ArticleCardFields
+      body {
+        ...ArticleBodyFields
+      }
+    }
+  }
+}
+
+query GetArticleSlugs($limit: Int = 200) {
+  articleCollection(limit: $limit) {
+    items {
+      slug
+    }
+  }
+}
+
+query GetHome($preview: Boolean = false) {
+  homeCollection(limit: 1, preview: $preview) {
+    items {
+      sys {
+        id
+      }
+      internalTitle
+      featuredMediaArticlesCollection(limit: 10) {
+        items {
+          ... on Article {
+            ...ArticleCardFields
+          }
+        }
+      }
+      heroArticle {
+        ... on Article {
+          ...ArticleCardFields
+        }
+      }
+      todaysHighlightsCollection(limit: 15) {
+        items {
+          ... on Article {
+            ...ArticleCardFields
+          }
+        }
+      }
+      recommendedArticle {
+        ... on Article {
+          ...ArticleCardFields
+        }
+      }
+      educationArticlesCollection(limit: 15) {
+        items {
+          ... on Article {
+            ...ArticleCardFields
+          }
+        }
+      }
+      # Single-reference "Hot article" is exposed as a collection in Contentful GraphQL (not `hotArticle`).
+      hotArticleCollection(limit: 1) {
+        items {
+          ... on Article {
+            ...ArticleCardFields
+          }
+        }
+      }
+    }
+  }
+}
