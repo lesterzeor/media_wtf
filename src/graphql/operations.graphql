@@ -53,9 +53,20 @@ query GetArticles($limit: Int = 12, $skip: Int = 0, $preview: Boolean = false) {
   }
 }
 
-# @contentSourceMaps: required for Live Preview “live updates” with GraphQL (see encodeGraphQLResponse). Premium plan.
-query GetArticleBySlug($slug: String!, $preview: Boolean = false) @contentSourceMaps {
+query GetArticleBySlug($slug: String!, $preview: Boolean = false) {
   articleCollection(limit: 1, where: { slug: $slug }, preview: $preview) {
+    items {
+      ...ArticleCardFields
+      body {
+        json
+      }
+    }
+  }
+}
+
+# Same fields as GetArticleBySlug but with Content Source Maps — **preview: true only** (delivery API rejects CSM + preview:false). Used for live updates in draft mode.
+query GetArticleBySlugLivePreview($slug: String!) @contentSourceMaps {
+  articleCollection(limit: 1, where: { slug: $slug }, preview: true) {
     items {
       ...ArticleCardFields
       body {

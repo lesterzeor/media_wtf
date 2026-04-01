@@ -2,12 +2,12 @@
 
 import { useContentfulLiveUpdates } from "@contentful/live-preview/react";
 import { ArticleView } from "@/components/content/ArticleView";
-import { GetArticleBySlugDocument } from "@/gql/graphql";
-import type { GetArticleBySlugQuery } from "@/gql/graphql";
+import { GetArticleBySlugLivePreviewDocument } from "@/gql/graphql";
+import type { GetArticleBySlugLivePreviewQuery } from "@/gql/graphql";
 import { mapArticle } from "@/lib/contentful/mappers";
 
 type Props = {
-  initialQuery: GetArticleBySlugQuery;
+  initialQuery: GetArticleBySlugLivePreviewQuery;
   locale: string;
 };
 
@@ -17,7 +17,7 @@ type Props = {
  */
 export function ArticlePageClient({ initialQuery, locale }: Props) {
   const data = useContentfulLiveUpdates(initialQuery, {
-    query: GetArticleBySlugDocument,
+    query: GetArticleBySlugLivePreviewDocument,
     locale,
   });
 

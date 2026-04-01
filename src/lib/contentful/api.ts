@@ -3,11 +3,12 @@ import { print } from "graphql";
 import { draftMode } from "next/headers";
 import {
   GetArticleBySlugDocument,
+  GetArticleBySlugLivePreviewDocument,
   GetArticlesDocument,
   GetArticleSlugsDocument,
   GetHomeDocument,
 } from "@/gql/graphql";
-import type { GetArticleBySlugQuery, GetArticlesQuery } from "@/gql/graphql";
+import type { GetArticleBySlugLivePreviewQuery, GetArticleBySlugQuery, GetArticlesQuery } from "@/gql/graphql";
 import { getContentfulClient } from "@/lib/contentful/client";
 import { mapArticle, mapHome } from "@/lib/contentful/mappers";
 import type { Article, HomeLayout } from "@/types/content";
@@ -51,33 +52,23 @@ export async function getArticleBySlug(slug: string): Promise<Article | null> {
 }
 
 /**
- * Raw GraphQL for Live Preview. For draft mode we use `rawRequest` so `extensions` (Content Source Maps)
- * are available, then `encodeGraphQLResponse` so `useContentfulLiveUpdates` can merge edits.
- * Without `@contentSourceMaps` + encode, the SDK cannot wire fields and you must refresh manually.
- * Content Source Maps require a Contentful **Premium** plan.
+ * Raw GraphQL for Live Preview only (`/articles/[slug]` when draft mode is on).
+ * Uses `GetArticleBySlugLivePreview` (`@contentSourceMaps`, `preview: true` fixed in the document).
+ * Do not use the CSM query for static builds or `preview: false` — Contentful rejects it.
  */
-export async function getArticleBySlugQuery(slug: string): Promise<GetArticleBySlugQuery | null> {
+export async function getArticleBySlugQuery(slug: string): Promise<GetArticleBySlugLivePreviewQuery | null> {
   const { isEnabled } = await draftMode();
-  const client = getContentfulClient(isEnabled);
-
   if (!isEnabled) {
-    const data = await client.request(GetArticleBySlugDocument, {
-      slug,
-      preview: false,
-    });
-    const first = articleItemsFromSlugQuery(data)[0];
-    return first ? data : null;
+    return null;
   }
 
+  const client = getContentfulClient(true);
   const response = await client.rawRequest({
-    query: print(GetArticleBySlugDocument),
-    variables: {
-      slug,
-      preview: true,
-    },
+    query: print(GetArticleBySlugLivePreviewDocument),
+    variables: { slug },
   });
 
-  const data = response.data as GetArticleBySlugQuery | undefined;
+  const data = response.data as GetArticleBySlugLivePreviewQuery | undefined;
   const first = data?.articleCollection?.items?.[0];
   if (!first) {
     return null;
@@ -89,13 +80,13 @@ export async function getArticleBySlugQuery(slug: string): Promise<GetArticleByS
         data,
         extensions: response.extensions,
       });
-      return encoded.data as GetArticleBySlugQuery;
+      return encoded.data as GetArticleBySlugLivePreviewQuery;
     } catch {
       // Encoding failed (e.g. missing maps) — fall back to raw data; live updates may not work.
     }
   }
 
-  return data as GetArticleBySlugQuery;
+  return data as GetArticleBySlugLivePreviewQuery;
 }
 
 export async function getArticleSlugs(): Promise<string[]> {
