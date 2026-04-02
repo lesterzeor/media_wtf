@@ -1,7 +1,7 @@
 "use client";
 
 import { ContentfulImage } from "@/components/content/ContentfulImage";
-import { RichText } from "@/components/content/RichText";
+import { ArticleBodyPaginated } from "@/components/content/ArticleBodyPaginated";
 import { AdRegion } from "@/components/ui/AdRegion";
 import type { Article } from "@/types/content";
 
@@ -31,7 +31,7 @@ export function ArticleView({ article }: ArticleViewProps) {
           )}
         </header>
         {article.heroImage ? <ContentfulImage image={article.heroImage} priority /> : null}
-        <RichText document={article.body} />
+        <ArticleBodyPaginated key={article.id} body={article.body} />
         <AdRegion region="in-content" />
       </div>
       <aside className="space-y-4">
