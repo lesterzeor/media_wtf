@@ -1,7 +1,7 @@
 import { EducationCard } from "@/components/editorial/EducationCard";
 import { SectionHeader } from "@/components/editorial/SectionHeader";
 import type { EducationSectionProps } from "@/components/editorial/types";
-import { AdSlot } from "@/components/ui/AdSlot";
+import { AdRegion } from "@/components/ui/AdRegion";
 
 export function EducationSection({ articles }: EducationSectionProps) {
   const cells = articles.slice(0, 4);
@@ -24,7 +24,7 @@ export function EducationSection({ articles }: EducationSectionProps) {
           )}
         </div>
         <div className="flex border-t border-neutral-200 bg-neutral-50 p-4 lg:border-l lg:border-t-0">
-          <AdSlot slot="sidebar" className="min-h-[260px] w-full lg:min-h-0" />
+          <AdRegion region="sidebar" className="min-h-[260px] w-full lg:min-h-0" />
         </div>
       </div>
     </section>

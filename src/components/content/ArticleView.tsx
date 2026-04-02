@@ -2,7 +2,7 @@
 
 import { ContentfulImage } from "@/components/content/ContentfulImage";
 import { RichText } from "@/components/content/RichText";
-import { AdSlot } from "@/components/ui/AdSlot";
+import { AdRegion } from "@/components/ui/AdRegion";
 import type { Article } from "@/types/content";
 
 type ArticleViewProps = {
@@ -32,10 +32,10 @@ export function ArticleView({ article }: ArticleViewProps) {
         </header>
         {article.heroImage ? <ContentfulImage image={article.heroImage} priority /> : null}
         <RichText document={article.body} />
-        <AdSlot slot="in-content" />
+        <AdRegion region="in-content" />
       </div>
       <aside className="space-y-4">
-        <AdSlot slot="sidebar" className="min-h-64" />
+        <AdRegion region="sidebar" className="min-h-64" />
       </aside>
     </article>
   );
