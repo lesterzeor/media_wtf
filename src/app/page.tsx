@@ -1,5 +1,5 @@
 import { Container } from "@/components/ui/Container";
-import { AdPlaceholder } from "@/components/ui/AdPlaceholder";
+import { AdRegion } from "@/components/ui/AdRegion";
 import { FeaturedArticle } from "@/components/home/FeaturedArticle";
 import { FeaturedMediaGrid } from "@/components/home/FeaturedMediaGrid";
 import { HotSection } from "@/components/home/HotSection";
@@ -102,20 +102,20 @@ export default async function Home() {
         <div className="grid gap-8 lg:grid-cols-12 lg:items-start lg:gap-6 xl:gap-8">
           <div className="flex min-w-0 flex-col gap-6 lg:col-span-5 xl:col-span-5">
             {featured ? <FeaturedArticle article={featured} /> : null}
-            <AdPlaceholder width={300} height={250} />
+            <AdRegion region="in-content" className="mx-auto min-h-[250px] w-full max-w-[300px]" />
             <MustSeeSection articles={mustSee} />
           </div>
 
           <div className="flex min-w-0 flex-col gap-6 lg:col-span-3 xl:col-span-4">
             <TrendingSection articles={trending} />
-            <AdPlaceholder width={300} height={250} />
+            <AdRegion region="top" className="mx-auto min-h-[250px] w-full max-w-[300px]" />
           </div>
 
           <aside className="flex min-w-0 flex-col gap-8 lg:col-span-4 xl:col-span-3">
             <SubscribeSidebar />
             <HotSection article={hotArticle} />
             <RecommendedSidebarSection articles={recommendedSidebar} />
-            <AdPlaceholder width={300} height={250} />
+            <AdRegion region="sidebar" className="mx-auto min-h-[250px] w-full max-w-[300px]" />
           </aside>
         </div>
       </Container>

@@ -11,6 +11,12 @@ export function AdSenseScript() {
   const src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${encodeURIComponent(client)}`;
 
   return (
-    <Script async id="adsense-loader" src={src} strategy="afterInteractive" crossOrigin="anonymous" />
+    <Script
+      async
+      id="adsense-loader"
+      src={src}
+      strategy="beforeInteractive"
+      crossOrigin="anonymous"
+    />
   );
 }

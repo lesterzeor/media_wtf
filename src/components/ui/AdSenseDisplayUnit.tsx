@@ -9,11 +9,26 @@ declare global {
   }
 }
 
+/** Avoid duplicate `.push({})` on the same `<ins>` (e.g. React Strict Mode). */
+const pushedIns = new WeakSet<Element>();
+
 type AdSenseDisplayUnitProps = {
   /** Ad unit ID from AdSense (numeric string). */
   adSlot: string;
   className?: string;
 };
+
+function runPush(ins: HTMLElement) {
+  if (pushedIns.has(ins)) {
+    return;
+  }
+  pushedIns.add(ins);
+  try {
+    (window.adsbygoogle = window.adsbygoogle || []).push({});
+  } catch {
+    pushedIns.delete(ins);
+  }
+}
 
 /**
  * Responsive display unit. On non–Vercel-prod/preview, sets `data-adtest="on"` (test creatives).
@@ -24,14 +39,20 @@ export function AdSenseDisplayUnit({ adSlot, className }: AdSenseDisplayUnitProp
   const insRef = useRef<HTMLModElement>(null);
 
   useEffect(() => {
-    if (!client || !adSlot || !insRef.current) {
+    const ins = insRef.current;
+    if (!client || !adSlot || !ins) {
       return;
     }
-    try {
-      (window.adsbygoogle = window.adsbygoogle || []).push({});
-    } catch {
-      /* ignore */
-    }
+
+    // Defer until after layout + `next/script` loader can register; helps fills on production.
+    const t = window.setTimeout(() => {
+      if (insRef.current !== ins) {
+        return;
+      }
+      runPush(ins);
+    }, 0);
+
+    return () => window.clearTimeout(t);
   }, [client, adSlot]);
 
   if (!client) {
@@ -42,7 +63,7 @@ export function AdSenseDisplayUnit({ adSlot, className }: AdSenseDisplayUnitProp
     <ins
       ref={insRef}
       className={["adsbygoogle", className].filter(Boolean).join(" ")}
-      style={{ display: "block" }}
+      style={{ display: "block", minHeight: "250px", textAlign: "center" }}
       data-ad-client={client}
       data-ad-slot={adSlot}
       data-ad-format="auto"
