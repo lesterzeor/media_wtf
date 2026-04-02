@@ -57,7 +57,11 @@ export default async function RootLayout({
       lang="en"
       className={`${oswald.variable} ${geistMono.variable} ${merriweather.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col bg-neutral-50 text-neutral-900">
+      {/* suppressHydrationWarning: browser extensions may inject attrs on <body> before React hydrates. */}
+      <body
+        className="flex min-h-full flex-col bg-neutral-50 text-neutral-900"
+        suppressHydrationWarning
+      >
         <ContentfulLivePreviewRoot
           enabled={draftModeEnabled}
           spaceId={spaceId}

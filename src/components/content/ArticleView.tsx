@@ -3,6 +3,7 @@
 import { ContentfulImage } from "@/components/content/ContentfulImage";
 import { ArticleBodyPaginated } from "@/components/content/ArticleBodyPaginated";
 import { AdRegion } from "@/components/ui/AdRegion";
+import { formatPublishedDateLong } from "@/lib/formatPublishedDate";
 import type { Article } from "@/types/content";
 
 type ArticleViewProps = {
@@ -23,9 +24,7 @@ export function ArticleView({ article }: ArticleViewProps) {
               ) : null}
               {article.author?.trim() && article.publishedAt ? <> · </> : null}
               {article.publishedAt ? (
-                <>
-                  Published {new Date(article.publishedAt).toLocaleDateString("en-US", { dateStyle: "long" })}
-                </>
+                <>Published {formatPublishedDateLong(article.publishedAt) ?? article.publishedAt}</>
               ) : null}
             </p>
           )}
