@@ -27,9 +27,19 @@ const merriweather = Merriweather({
   weight: ["400", "700"],
 });
 
+const adsenseClientId = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID?.trim();
+
 export const metadata: Metadata = {
   title: "MediaWTF",
   description: "Content-driven publishing scaffold with Contentful GraphQL",
+  ...(adsenseClientId
+    ? {
+        other: {
+          /** Helps Google AdSense confirm site ownership alongside ads.txt + script. */
+          "google-adsense-account": adsenseClientId,
+        },
+      }
+    : {}),
 };
 
 export default async function RootLayout({
