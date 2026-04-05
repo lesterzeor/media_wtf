@@ -1,5 +1,6 @@
 import { Container } from "@/components/ui/Container";
 import { AdRegion } from "@/components/ui/AdRegion";
+import { HomeScrollToTop } from "@/components/home/HomeScrollToTop";
 import { FeaturedArticle } from "@/components/home/FeaturedArticle";
 import { FeaturedMediaGrid } from "@/components/home/FeaturedMediaGrid";
 import { HotSection } from "@/components/home/HotSection";
@@ -8,6 +9,11 @@ import { RecommendedSidebarSection } from "@/components/home/RecommendedSidebarS
 import { SubscribeSidebar } from "@/components/home/SubscribeSidebar";
 import { TrendingSection } from "@/components/home/TrendingSection";
 import { getArticles, getHome } from "@/lib/contentful/api";
+import {
+  HOME_SECTION_CATEGORY_SLUGS,
+  HOME_SECTION_LIMIT,
+  pickArticlesForHomeSection,
+} from "@/lib/contentful/homeFeed";
 import type { Article } from "@/types/content";
 
 export const revalidate = 300;
@@ -16,78 +22,91 @@ function withoutIds(articles: Article[], ids: Set<string>): Article[] {
   return articles.filter((a) => !ids.has(a.id));
 }
 
+/** Stories shown in the featured strip — exclude from lower lists to reduce duplicates. */
+function layoutExcludeIds(shown: Article[]): Set<string> {
+  return new Set(shown.map((a) => a.id));
+}
+
 export default async function Home() {
   let articles: Article[] = [];
   let loadError: string | null = null;
 
   try {
-    articles = await getArticles(24);
+    articles = await getArticles(100);
   } catch (error) {
     loadError = error instanceof Error ? error.message : "Could not load Contentful content.";
   }
 
   const home = await getHome();
 
-  const curatedFeatured =
-    home && home.featuredMedia.length > 0 ? home.featuredMedia : null;
+  /** Contentful order when Home → Featured media is set; otherwise highlights or latest. */
+  const orderedMedia: Article[] = (() => {
+    if (home && home.featuredMedia.length > 0) {
+      return home.featuredMedia;
+    }
+    if (home && home.highlights.length > 0) {
+      return home.highlights.slice(0, 5);
+    }
+    return articles.slice(0, 5);
+  })();
 
-  const featured = curatedFeatured
-    ? curatedFeatured[0] ?? null
-    : home?.hero ?? articles[0] ?? null;
-  const featuredId = featured?.id;
-  const usedIds = new Set<string>(featuredId ? [featuredId] : []);
-
-  const gridArticles = curatedFeatured
-    ? curatedFeatured.slice(1, 5)
-    : (() => {
-        const gridSource =
-          home && home.highlights.length > 0
-            ? home.highlights.filter((a) => a.id !== featuredId)
-            : articles.slice(1).filter((a) => a.id !== featuredId);
-        return gridSource.slice(0, 4);
-      })();
-
-  const pool = withoutIds(articles, usedIds);
-
-  const mustSeeRaw =
-    home?.mustSee && home.mustSee.length > 0
-      ? home.mustSee
-      : home?.education && home.education.length > 0
-        ? home.education
-        : pool.slice(0, 6);
-
-  let mustSee = featuredId
-    ? mustSeeRaw.filter((a) => a.id !== featuredId)
-    : mustSeeRaw;
-
-  if (mustSee.length === 0 && pool.length > 0) {
-    const exclude = new Set(featuredId ? [featuredId] : []);
-    mustSee = withoutIds(pool, exclude).slice(0, 6);
+  /** Strip uses positions 1–5 only (large featured + 2×2). */
+  const featuredStripArticles = orderedMedia.slice(0, 5);
+  const layoutExcluded = layoutExcludeIds(featuredStripArticles);
+  const featuredLeftColumn = home?.featured ?? null;
+  if (featuredLeftColumn) {
+    layoutExcluded.add(featuredLeftColumn.id);
   }
+  const pool = withoutIds(articles, layoutExcluded);
+
+  /** Must see: up to 8 newest, preferring guides / lifestyle / opinion / culture, then backfill. */
+  const mustSee = pickArticlesForHomeSection(
+    articles,
+    HOME_SECTION_CATEGORY_SLUGS.mustSee,
+    HOME_SECTION_LIMIT,
+    layoutExcluded,
+  );
 
   const mustSeeIds = new Set(mustSee.map((a) => a.id));
 
-  const trending =
-    home?.trending && home.trending.length > 0
-      ? home.trending
-      : home?.highlights && home.highlights.length > 0
-        ? home.highlights.filter((a) => !mustSeeIds.has(a.id)).slice(0, 8)
-        : withoutIds(pool, mustSeeIds).slice(0, 6);
+  /** Trending: up to 8 newest, preferring tech / science / opinion / culture; optional top-up from Home “highlights” if still short. */
+  const trendingExclude = new Set([...layoutExcluded, ...mustSeeIds]);
 
-  const hotArticle =
-    home?.hot ??
-    home?.recommended ??
-    withoutIds(pool, mustSeeIds)[0] ??
-    null;
+  const trending = pickArticlesForHomeSection(
+    articles,
+    HOME_SECTION_CATEGORY_SLUGS.trending,
+    HOME_SECTION_LIMIT,
+    trendingExclude,
+  );
 
-  const sidebarExclude = new Set<string>([...mustSeeIds, ...(hotArticle ? [hotArticle.id] : [])]);
-  const recommendedSidebar =
-    home?.recommendedSidebar && home.recommendedSidebar.length > 0
-      ? home.recommendedSidebar
-      : withoutIds(pool, sidebarExclude).slice(0, 5);
+  if (trending.length < HOME_SECTION_LIMIT && home?.highlights && home.highlights.length > 0) {
+    for (const a of home.highlights) {
+      if (trending.length >= HOME_SECTION_LIMIT) {
+        break;
+      }
+      if (trendingExclude.has(a.id) || trending.some((x) => x.id === a.id)) {
+        continue;
+      }
+      trending.push(a);
+    }
+  }
+
+  const trendingIds = new Set(trending.map((a) => a.id));
+
+  const hotArticle = home?.hot ?? withoutIds(pool, mustSeeIds)[0] ?? null;
+
+  const sidebarExclude = new Set<string>([...mustSeeIds, ...trendingIds, ...(hotArticle ? [hotArticle.id] : [])]);
+
+  const recommendedSidebar = pickArticlesForHomeSection(
+    articles,
+    HOME_SECTION_CATEGORY_SLUGS.recommended,
+    HOME_SECTION_LIMIT,
+    new Set([...layoutExcluded, ...sidebarExclude]),
+  );
 
   return (
     <div className="pb-16">
+      <HomeScrollToTop />
       <Container wide className="space-y-8 pt-6 md:space-y-10 md:pt-8">
         {loadError ? (
           <div className="rounded-lg border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900">
@@ -96,26 +115,26 @@ export default async function Home() {
           </div>
         ) : null}
 
-        <FeaturedMediaGrid featured={featured} grid={gridArticles} />
+        <FeaturedMediaGrid articles={featuredStripArticles} />
 
         {/* Reference layout: Must see | Trending + ad | Subscribe + Hot + Recommended + ad */}
         <div className="grid gap-8 lg:grid-cols-12 lg:items-start lg:gap-6 xl:gap-8">
           <div className="flex min-w-0 flex-col gap-6 lg:col-span-5 xl:col-span-5">
-            {featured ? <FeaturedArticle article={featured} /> : null}
-            <AdRegion region="in-content" className="mx-auto min-h-[250px] w-full max-w-[300px]" />
+            {featuredLeftColumn ? <FeaturedArticle article={featuredLeftColumn} /> : null}
+            <AdRegion region="in-content" className="mx-auto w-full max-w-[300px]" />
             <MustSeeSection articles={mustSee} />
           </div>
 
           <div className="flex min-w-0 flex-col gap-6 lg:col-span-3 xl:col-span-4">
             <TrendingSection articles={trending} />
-            <AdRegion region="top" className="mx-auto min-h-[250px] w-full max-w-[300px]" />
+            <AdRegion region="top" className="mx-auto w-full max-w-[300px]" />
           </div>
 
           <aside className="flex min-w-0 flex-col gap-8 lg:col-span-4 xl:col-span-3">
             <SubscribeSidebar />
             <HotSection article={hotArticle} />
             <RecommendedSidebarSection articles={recommendedSidebar} />
-            <AdRegion region="sidebar" className="mx-auto min-h-[250px] w-full max-w-[300px]" />
+            <AdRegion region="sidebar" className="mx-auto w-full max-w-[300px]" />
           </aside>
         </div>
       </Container>

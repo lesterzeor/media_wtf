@@ -67,7 +67,7 @@ export function AdSlot({ slot, className }: AdSlotProps) {
   return (
     <div
       id={elementId}
-      className={cn("flex min-h-[90px] justify-center overflow-hidden bg-slate-100/80", className)}
+      className={cn("flex min-h-0 justify-center overflow-hidden bg-slate-100/80", className)}
       data-ad-slot={slot}
     />
   );

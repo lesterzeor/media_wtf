@@ -161,11 +161,6 @@ query GetHome($preview: Boolean = false) {
           }
         }
       }
-      heroArticle {
-        ... on Article {
-          ...ArticleCardFields
-        }
-      }
       todaysHighlightsCollection(limit: 15) {
         items {
           ... on Article {
@@ -173,16 +168,9 @@ query GetHome($preview: Boolean = false) {
           }
         }
       }
-      recommendedArticle {
+      featuredArticle {
         ... on Article {
           ...ArticleCardFields
-        }
-      }
-      educationArticlesCollection(limit: 15) {
-        items {
-          ... on Article {
-            ...ArticleCardFields
-          }
         }
       }
       # Single-reference "Hot article" is exposed as a collection in Contentful GraphQL (not `hotArticle`).

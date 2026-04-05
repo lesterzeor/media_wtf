@@ -29,7 +29,7 @@ Use this file to track deferred work mentioned in planning or reviews. **Update 
 
 ## Contentful
 
-- **Context:** Home singleton fields include `mustSeeArticles`, `hotArticle`, `recommendedSidebarArticles`, `trendingArticles`, plus hero/highlights/education/legacy recommended.
+- **Context:** Home singleton fields include `mustSeeArticles`, `hotArticle`, `recommendedSidebarArticles`, `trendingArticles`, plus featured media and highlights.
 - **TODO:** After model changes, run `npm run contentful:sync-home-model`, fill the Home entry in the UI, publish, then `npm run codegen` if GraphQL shape changes.
 
 ### Live Preview & live updates (deferred — revisit later)

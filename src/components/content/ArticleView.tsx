@@ -1,8 +1,9 @@
 "use client";
 
 import { ContentfulImage } from "@/components/content/ContentfulImage";
-import { RichText } from "@/components/content/RichText";
+import { ArticleBodyPaginated } from "@/components/content/ArticleBodyPaginated";
 import { AdRegion } from "@/components/ui/AdRegion";
+import { formatPublishedDateLong } from "@/lib/formatPublishedDate";
 import type { Article } from "@/types/content";
 
 type ArticleViewProps = {
@@ -23,19 +24,17 @@ export function ArticleView({ article }: ArticleViewProps) {
               ) : null}
               {article.author?.trim() && article.publishedAt ? <> · </> : null}
               {article.publishedAt ? (
-                <>
-                  Published {new Date(article.publishedAt).toLocaleDateString("en-US", { dateStyle: "long" })}
-                </>
+                <>Published {formatPublishedDateLong(article.publishedAt) ?? article.publishedAt}</>
               ) : null}
             </p>
           )}
         </header>
         {article.heroImage ? <ContentfulImage image={article.heroImage} priority /> : null}
-        <RichText document={article.body} />
+        <ArticleBodyPaginated key={article.id} body={article.body} />
         <AdRegion region="in-content" />
       </div>
       <aside className="space-y-4">
-        <AdRegion region="sidebar" className="min-h-64" />
+        <AdRegion region="sidebar" />
       </aside>
     </article>
   );

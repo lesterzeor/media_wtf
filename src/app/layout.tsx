@@ -6,7 +6,10 @@ import { PreviewModeBanner } from "@/components/contentful/PreviewModeBanner";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { AdSenseScript } from "@/lib/ads/AdSenseScript";
 import { GooglePublisherTag } from "@/lib/ads/GooglePublisherTag";
-import { GoogleTagManager } from "@/lib/analytics/GoogleTagManager";
+import {
+  GoogleTagManagerNoScript,
+  GoogleTagManagerScript,
+} from "@/lib/analytics/GoogleTagManager";
 import "./globals.css";
 
 /** Primary UI typeface — matches `font-sans` / body. */
@@ -57,14 +60,19 @@ export default async function RootLayout({
       lang="en"
       className={`${oswald.variable} ${geistMono.variable} ${merriweather.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col bg-neutral-50 text-neutral-900">
+      {/* suppressHydrationWarning: browser extensions may inject attrs on <body> before React hydrates. */}
+      <body
+        className="flex min-h-full flex-col bg-neutral-50 text-neutral-900"
+        suppressHydrationWarning
+      >
+        <GoogleTagManagerNoScript />
         <ContentfulLivePreviewRoot
           enabled={draftModeEnabled}
           spaceId={spaceId}
           environment={environment}
           locale={contentfulLocale}
         >
-          <GoogleTagManager />
+          <GoogleTagManagerScript />
           <AdSenseScript />
           <GooglePublisherTag />
           <MainLayout>{children}</MainLayout>

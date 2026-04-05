@@ -1,10 +1,8 @@
 import type { Article, ContentImage } from "@/types/content";
 
 export type FeaturedMediaGridProps = {
-  /** Large left feature */
-  featured: Article | null;
-  /** Up to four tiles for the 2×2 grid (padded with placeholders) */
-  grid: Article[];
+  /** Ordered list (e.g. Home → Featured media in Contentful). Rendered as equal tiles in that order. */
+  articles: Article[];
   className?: string;
 };
 

@@ -15,7 +15,7 @@ export function AdSenseScript() {
       async
       id="adsense-loader"
       src={src}
-      strategy="beforeInteractive"
+      strategy="afterInteractive"
       crossOrigin="anonymous"
     />
   );

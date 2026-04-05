@@ -74,7 +74,7 @@ Collection order is set in **`src/graphql/operations.graphql`** (`order: sys_pub
 
 ### Home page curation (singleton `home`)
 
-The home page reads a **single Home entry** for the featured grid, **Must see** (left column), **Trending** (center: text list + ad placeholder), **Subscribe** + **Hot** + **Recommended** + ad (right column), plus existing fields (hero, highlights, legacy recommended single, education list). Run `npm run contentful:sync-home-model` to add **`trendingArticles`** and other fields if missing.
+The home page reads a **single Home entry** for the featured grid, **Must see** (left column), **Trending** (center: text list + ad placeholder), **Subscribe** + **Hot** + **Recommended** + ad (right column), plus highlights. Run `npm run contentful:sync-home-model` to align the **`home`** content type (and to **remove** deprecated fields such as `educationArticles`, `heroArticle`, or `recommendedArticle` if still present).
 
 1. Add **`CONTENTFUL_MANAGEMENT_TOKEN`** to `.env.local` (Contentful → Settings → API keys → **Content management tokens**). Do **not** commit it or paste it into chat.
 2. Run:
@@ -85,7 +85,7 @@ npm run contentful:sync-home-model
 
 This creates/updates the **`home`** content type via the Management API (including **`mustSeeArticles`**, **`hotArticle`**, **`recommendedSidebarArticles`** when missing).
 
-3. In Contentful → **Content**, edit your **Home** entry: link **Hero article**, **Today’s highlights**, **Must see articles**, **Trending articles**, **Hot article**, **Recommended (sidebar list)**, **Recommended article** (legacy fallback for Hot), **Education articles**, then **Publish**.
+3. In Contentful → **Content**, edit your **Home** entry: link **Featured media**, **Featured article (left column)** (large card above the left ad), **Today’s highlights**, **Must see articles**, **Trending articles**, **Hot article**, **Recommended (sidebar list)**, then **Publish**.
 4. Wait briefly for GraphQL to expose new fields, then run **`npm run codegen`** if needed. Until the Home query succeeds, the page **falls back** to the latest articles list for empty sections.
 
 ## Key folders
@@ -93,7 +93,7 @@ This creates/updates the **`home`** content type via the Management API (includi
 - `src/app` routes (`/`, `/articles`, `/articles/[slug]`)
 - `src/components/home` home page blocks (`FeaturedMediaGrid`, `MustSeeSection`, `TrendingSection`, `SubscribeSidebar`, `HotSection`, `RecommendedSidebarSection`, shared `ArticleThumb`, `ArticleMetaLine`, `HomeSectionHeader`) + `types.ts`
 - `src/components/layout` app shell (`Navbar`, `Footer`, `MainLayout`) + `types.ts`
-- `src/components/editorial` shared article/editorial pieces (`CategoryTags`, `EditorialHeroImage`, `EducationSection`, etc.) + `types.ts`
+- `src/components/editorial` shared article/editorial pieces (`CategoryTags`, `EditorialHeroImage`, etc.) + `types.ts`
 - `src/config/site.ts` logo wordmark + main nav labels
 - `src/components/ui` shared primitives (`Card`, `Container`, `AdSlot`, `AdPlaceholder`, etc.) + `types.ts`
 - `src/components/content` Contentful renderers (`RichText`, `ContentfulImage`) + `types.ts`
