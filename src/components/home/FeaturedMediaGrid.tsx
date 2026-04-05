@@ -120,18 +120,21 @@ function MediaGridTile({
 }
 
 /**
- * Featured media layout:
- * - **Mobile:** full-width hero (`col-span-2`), then a flush 2×2 grid (50% / 50%), centered captions.
- * - **Desktop:** ~60% featured + ~40% 2×2, left-aligned captions.
+ * Featured media layout (5 slots) in **Contentful list order**:
+ * - index 0 → large featured tile (~60% desktop)
+ * - indices 1–4 → 2×2 grid (~40%)
+ *
+ * **Mobile:** full-width featured row, then a flush 2×2 grid.
  */
-export function FeaturedMediaGrid({
-  featured,
-  grid,
-  className,
-}: FeaturedMediaGridProps) {
-  const slots: (Article | null)[] = [...grid.slice(0, 4)];
+export function FeaturedMediaGrid({ articles, className }: FeaturedMediaGridProps) {
+  const featured = articles[0] ?? null;
+  const slots: (Article | null)[] = [...articles.slice(1, 5)];
   while (slots.length < 4) {
     slots.push(null);
+  }
+
+  if (!featured && slots.every((s) => s == null)) {
+    return null;
   }
 
   return (
@@ -144,7 +147,6 @@ export function FeaturedMediaGrid({
       )}
       aria-label="Featured stories"
     >
-      {/* Mobile: 2-col grid — row1 full-width feature; rows 2–3 are four half-width tiles. Desktop: 60/40 split. */}
       <div className="grid grid-cols-2 gap-0 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] lg:min-h-[min(70vw,520px)] lg:max-h-[640px]">
         <div className="col-span-2 min-h-0 lg:col-span-1 lg:min-h-0">
           <MediaGridTile article={featured} size="featured" priority />

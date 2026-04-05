@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArticleThumb } from "@/components/home/ArticleThumb";
 import { HomeSectionHeader } from "@/components/home/HomeSectionHeader";
 import type { RecommendedSidebarSectionProps } from "@/components/home/types";
+import { primaryCategoryName } from "@/lib/contentful/homeFeed";
 import { cn } from "@/lib/utils";
 
 export type { RecommendedSidebarSectionProps } from "@/components/home/types";
@@ -15,7 +16,9 @@ export function RecommendedSidebarSection({ articles, className }: RecommendedSi
     <section className={cn("overflow-hidden rounded-lg border border-neutral-200 bg-white shadow-sm", className)}>
       <HomeSectionHeader title="Recommended" variant="ribbon" />
       <ul className="divide-y divide-neutral-200 px-3 md:px-4">
-        {articles.map((article) => (
+        {articles.map((article) => {
+          const category = primaryCategoryName(article);
+          return (
           <li key={article.id}>
             <Link
               href={`/articles/${article.slug}`}
@@ -26,12 +29,18 @@ export function RecommendedSidebarSection({ articles, className }: RecommendedSi
               ) : (
                 <div className="size-24 shrink-0 rounded bg-neutral-200" aria-hidden />
               )}
-              <h3 className="min-w-0 flex-1 font-sans text-[15px] font-bold leading-snug text-neutral-900">
-                {article.title}
-              </h3>
+              <div className="min-w-0 flex-1">
+                {category ? (
+                  <p className="mb-0.5 text-[10px] font-bold uppercase tracking-[0.12em] text-brand-navy">
+                    {category}
+                  </p>
+                ) : null}
+                <h3 className="font-sans text-[15px] font-bold leading-snug text-neutral-900">{article.title}</h3>
+              </div>
             </Link>
           </li>
-        ))}
+          );
+        })}
       </ul>
     </section>
   );

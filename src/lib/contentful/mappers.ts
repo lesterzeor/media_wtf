@@ -69,10 +69,8 @@ function extractCategories(raw: RawArticle): Category[] {
 type RawHomeItem = {
   internalTitle?: string;
   featuredMediaArticlesCollection?: { items?: Array<RawArticle | null> };
-  heroArticle?: RawArticle | null;
   todaysHighlightsCollection?: { items?: Array<RawArticle | null> };
-  recommendedArticle?: RawArticle | null;
-  educationArticlesCollection?: { items?: Array<RawArticle | null> };
+  featuredArticle?: RawArticle | null;
   mustSeeArticlesCollection?: { items?: Array<RawArticle | null> };
   /** Contentful GraphQL exposes the one link as `hotArticleCollection`, not `hotArticle`. */
   hotArticleCollection?: { items?: Array<RawArticle | null> };
@@ -95,10 +93,8 @@ export function mapHome(raw: RawHomeItem | null | undefined): HomeLayout | null 
   return {
     internalTitle: raw.internalTitle,
     featuredMedia: mapArticleList(raw.featuredMediaArticlesCollection?.items),
-    hero: mapArticle(raw.heroArticle),
+    featured: mapArticle(raw.featuredArticle),
     highlights: mapArticleList(raw.todaysHighlightsCollection?.items),
-    recommended: mapArticle(raw.recommendedArticle),
-    education: mapArticleList(raw.educationArticlesCollection?.items),
     mustSee: mapArticleList(raw.mustSeeArticlesCollection?.items),
     hot:
       mapArticle(raw.hotArticle) ??

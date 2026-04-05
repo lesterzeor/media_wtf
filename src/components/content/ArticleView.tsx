@@ -34,7 +34,7 @@ export function ArticleView({ article }: ArticleViewProps) {
         <AdRegion region="in-content" />
       </div>
       <aside className="space-y-4">
-        <AdRegion region="sidebar" className="min-h-64" />
+        <AdRegion region="sidebar" />
       </aside>
     </article>
   );

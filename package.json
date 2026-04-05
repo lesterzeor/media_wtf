@@ -12,7 +12,8 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
-    "contentful:sync-home-model": "tsx scripts/ensure-home-content-type.ts"
+    "contentful:sync-home-model": "tsx scripts/ensure-home-content-type.ts",
+    "contentful:seed-articles": "tsx scripts/seed-demo-articles.ts"
   },
   "dependencies": {
     "@analytics/google-tag-manager": "^0.6.0",

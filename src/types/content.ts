@@ -36,15 +36,13 @@ export type Article = {
 export type HomeLayout = {
   internalTitle?: string;
   /**
-   * Ordered list for `FeaturedMediaGrid`: first = large tile, next up to four = grid.
-   * When empty, fall back to `hero` + `highlights` + latest articles.
+   * Ordered list for `FeaturedMediaGrid` (same order as in Contentful).
+   * First 5 slots: 1 large tile + 2×2 grid. When empty, fall back to highlights or latest.
    */
   featuredMedia: Article[];
-  hero: Article | null;
+  /** Left column card (below strip); single reference on Home, like Hot. */
+  featured: Article | null;
   highlights: Article[];
-  /** Legacy single spotlight; used as Hot fallback when `hot` is empty. */
-  recommended: Article | null;
-  education: Article[];
   mustSee: Article[];
   hot: Article | null;
   recommendedSidebar: Article[];

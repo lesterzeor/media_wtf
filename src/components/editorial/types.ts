@@ -26,14 +26,6 @@ export type RecommendedFeatureProps = {
   className?: string;
 };
 
-export type EducationCardProps = {
-  article: Article;
-};
-
-export type EducationSectionProps = {
-  articles: Article[];
-};
-
 export type TodaysHighlightsProps = {
   articles: Article[];
 };
