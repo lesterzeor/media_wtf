@@ -32,6 +32,8 @@ export function ArticleView({ article }: ArticleViewProps) {
         <ArticleBodyPaginated
           key={article.id}
           body={article.body}
+          closingYoutubeUrl={article.closingYoutubeUrl}
+          closingVideoUrl={article.closingVideoUrl}
           hero={
             article.heroImage ? (
               <figure className="mx-auto w-full max-w-4xl">

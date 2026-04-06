@@ -26,6 +26,8 @@ type RawArticle = {
     title?: string;
     description?: string;
   };
+  closingYoutubeUrl?: string | null;
+  closingVideoUrl?: string | null;
   /** Many references field in Contentful */
   categoriesCollection?: {
     items?: Array<RawCategory | null>;
@@ -137,6 +139,10 @@ export function mapArticle(raw: RawArticle | null | undefined): Article | null {
           description: raw.heroImage.description,
         }
       : undefined,
+    ...(raw.closingYoutubeUrl?.trim()
+      ? { closingYoutubeUrl: raw.closingYoutubeUrl.trim() }
+      : {}),
+    ...(raw.closingVideoUrl?.trim() ? { closingVideoUrl: raw.closingVideoUrl.trim() } : {}),
     categories: extractCategories(raw),
   };
 }
