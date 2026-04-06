@@ -2,7 +2,8 @@
 
 import { useEffect, useId } from "react";
 import { shouldUseRealAds } from "@/lib/ads/ads-environment";
-import { getAdUnitPath, getSizesForRegion, isGptConfigured } from "@/lib/ads/gpt-config";
+import { AdPlaceholder } from "@/components/ui/AdPlaceholder";
+import { getAdUnitPath, getBoilerplateSizeForRegion, getSizesForRegion, isGptConfigured } from "@/lib/ads/gpt-config";
 import { registerGptSlot, unregisterGptSlot } from "@/lib/ads/gpt-registry";
 import { cn } from "@/lib/utils";
 
@@ -46,22 +47,8 @@ export function AdSlot({ slot, className }: AdSlotProps) {
   }
 
   if (!shouldUseRealAds()) {
-    return (
-      <div
-        className={cn(
-          "flex min-h-24 items-center justify-center rounded-lg border border-dashed border-amber-200 bg-amber-50/80 p-4 text-xs text-amber-900",
-          className,
-        )}
-        data-ad-slot={slot}
-        data-ad-test-mode
-      >
-        <span className="text-center leading-snug">
-          <span className="font-semibold uppercase tracking-wide">Test / dev</span>
-          <br />
-          GAM slots only run on Vercel production and preview. Local uses placeholders.
-        </span>
-      </div>
-    );
+    const { width, height } = getBoilerplateSizeForRegion(slot);
+    return <AdPlaceholder width={width} height={height} className={className} />;
   }
 
   return (

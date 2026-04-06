@@ -1,7 +1,25 @@
 import type { Article } from "@/types/content";
 
-/** Max items for Must see, Trending, Recommended sidebar. */
+/** Default max items for Must see, Trending, Recommended sidebar when Contentful amounts are unset. */
 export const HOME_SECTION_LIMIT = 8;
+
+/** Allowed range for Home → Must see / Trending / Recommended amounts (Contentful integers). */
+export const HOME_SECTION_LIMIT_MIN = 1;
+export const HOME_SECTION_LIMIT_MAX = 24;
+
+/**
+ * Resolves list size from Contentful Home integer fields, clamped to [HOME_SECTION_LIMIT_MIN, HOME_SECTION_LIMIT_MAX].
+ */
+export function resolveHomeSectionLimit(
+  fromContentful: number | null | undefined,
+  fallback: number = HOME_SECTION_LIMIT,
+): number {
+  if (typeof fromContentful !== "number" || !Number.isFinite(fromContentful)) {
+    return fallback;
+  }
+  const n = Math.round(fromContentful);
+  return Math.min(HOME_SECTION_LIMIT_MAX, Math.max(HOME_SECTION_LIMIT_MIN, n));
+}
 
 /**
  * Every slug here should exist as a Contentful **Category** entry (`slug` field).

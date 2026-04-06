@@ -22,7 +22,7 @@ export function RecommendedSidebarSection({ articles, className }: RecommendedSi
           <li key={article.id}>
             <Link
               href={`/articles/${article.slug}`}
-              className="flex items-center gap-3 py-3 transition hover:bg-neutral-50/80"
+              className="flex items-center gap-3 py-3 transition hover:bg-neutral-50/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-primary"
             >
               {article.heroImage ? (
                 <ArticleThumb image={article.heroImage} alt={article.title} size="md" />

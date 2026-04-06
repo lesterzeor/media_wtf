@@ -30,7 +30,10 @@ export function HotSection({ article, className }: HotSectionProps) {
     <section className={cn("overflow-hidden rounded-lg border border-neutral-200 bg-white shadow-sm", className)}>
       <div className="p-4">
         <HomeSectionHeader title="Hot" variant="badge" />
-        <Link href={`/articles/${article.slug}`} className="group block">
+        <Link
+          href={`/articles/${article.slug}`}
+          className="group block rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2"
+        >
           <div className="relative mb-3 aspect-[16/10] w-full overflow-hidden rounded-md bg-neutral-200">
             {article.heroImage ? (
               <EditorialHeroImage

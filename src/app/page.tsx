@@ -1,5 +1,6 @@
 import { Container } from "@/components/ui/Container";
 import { AdRegion } from "@/components/ui/AdRegion";
+import { SITE_NAME } from "@/config/site";
 import { HomeScrollToTop } from "@/components/home/HomeScrollToTop";
 import { FeaturedArticle } from "@/components/home/FeaturedArticle";
 import { FeaturedMediaGrid } from "@/components/home/FeaturedMediaGrid";
@@ -11,8 +12,8 @@ import { TrendingSection } from "@/components/home/TrendingSection";
 import { getArticles, getHome } from "@/lib/contentful/api";
 import {
   HOME_SECTION_CATEGORY_SLUGS,
-  HOME_SECTION_LIMIT,
   pickArticlesForHomeSection,
+  resolveHomeSectionLimit,
 } from "@/lib/contentful/homeFeed";
 import type { Article } from "@/types/content";
 
@@ -59,29 +60,33 @@ export default async function Home() {
   }
   const pool = withoutIds(articles, layoutExcluded);
 
-  /** Must see: up to 8 newest, preferring guides / lifestyle / opinion / culture, then backfill. */
+  const mustSeeLimit = resolveHomeSectionLimit(home?.mustSeeAmount);
+  const trendingLimit = resolveHomeSectionLimit(home?.trendingAmount);
+  const recommendedLimit = resolveHomeSectionLimit(home?.recommendedSidebarAmount);
+
+  /** Must see: curated count from Home, preferring guides / lifestyle / opinion / culture, then backfill. */
   const mustSee = pickArticlesForHomeSection(
     articles,
     HOME_SECTION_CATEGORY_SLUGS.mustSee,
-    HOME_SECTION_LIMIT,
+    mustSeeLimit,
     layoutExcluded,
   );
 
   const mustSeeIds = new Set(mustSee.map((a) => a.id));
 
-  /** Trending: up to 8 newest, preferring tech / science / opinion / culture; optional top-up from Home “highlights” if still short. */
+  /** Trending: curated count; optional top-up from Home “highlights” if still short. */
   const trendingExclude = new Set([...layoutExcluded, ...mustSeeIds]);
 
   const trending = pickArticlesForHomeSection(
     articles,
     HOME_SECTION_CATEGORY_SLUGS.trending,
-    HOME_SECTION_LIMIT,
+    trendingLimit,
     trendingExclude,
   );
 
-  if (trending.length < HOME_SECTION_LIMIT && home?.highlights && home.highlights.length > 0) {
+  if (trending.length < trendingLimit && home?.highlights && home.highlights.length > 0) {
     for (const a of home.highlights) {
-      if (trending.length >= HOME_SECTION_LIMIT) {
+      if (trending.length >= trendingLimit) {
         break;
       }
       if (trendingExclude.has(a.id) || trending.some((x) => x.id === a.id)) {
@@ -100,7 +105,7 @@ export default async function Home() {
   const recommendedSidebar = pickArticlesForHomeSection(
     articles,
     HOME_SECTION_CATEGORY_SLUGS.recommended,
-    HOME_SECTION_LIMIT,
+    recommendedLimit,
     new Set([...layoutExcluded, ...sidebarExclude]),
   );
 
@@ -108,8 +113,12 @@ export default async function Home() {
     <div className="pb-16">
       <HomeScrollToTop />
       <Container wide className="space-y-8 pt-6 md:space-y-10 md:pt-8">
+        <h1 className="sr-only">{SITE_NAME}</h1>
         {loadError ? (
-          <div className="rounded-lg border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900">
+          <div
+            role="alert"
+            className="rounded-lg border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900"
+          >
             <p className="font-semibold">Contentful</p>
             <p>{loadError}</p>
           </div>

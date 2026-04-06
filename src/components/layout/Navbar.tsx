@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { MegaMenuDropdown } from "@/components/layout/MegaMenuDropdown";
-import { NAV_ITEMS, SITE_LOGO, SITE_LOGO_IMAGE, SITE_NAME } from "@/config/site";
+import { NAV_ITEMS, NAV_MENU_ENABLED, SITE_LOGO, SITE_LOGO_IMAGE, SITE_NAME } from "@/config/site";
 import { Container } from "@/components/ui/Container";
 import { cn } from "@/lib/utils";
 
@@ -79,7 +79,8 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const activeMega = openIndex !== null ? NAV_ITEMS[openIndex]?.megaMenu : undefined;
+  const activeMega =
+    NAV_MENU_ENABLED && openIndex !== null ? NAV_ITEMS[openIndex]?.megaMenu : undefined;
 
   return (
     <header
@@ -92,55 +93,62 @@ export function Navbar() {
     >
       <Container wide className="relative">
         <div className="flex h-16 items-stretch justify-between gap-4 md:h-17">
-          <Link href="/" className="flex shrink-0 items-center">
+          <Link
+            href="/"
+            className="flex shrink-0 items-center rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2"
+          >
             <LogoMark />
             <span className="sr-only">{SITE_NAME}</span>
           </Link>
-          <Link
-            href="/articles"
-            className="flex items-center text-[11px] font-bold uppercase tracking-wide text-neutral-800 hover:text-brand-navy md:hidden"
-          >
-            Articles
-          </Link>
+          {NAV_MENU_ENABLED ? (
+            <>
+              <Link
+                href="/articles"
+                className="flex items-center text-[11px] font-bold uppercase tracking-wide text-neutral-800 hover:text-brand-navy md:hidden"
+              >
+                Articles
+              </Link>
 
-          <div
-            className="relative hidden min-h-0 flex-1 flex-col justify-end md:flex"
-            onMouseLeave={scheduleClose}
-          >
-            <nav aria-label="Main navigation" className="flex justify-end pb-0">
-              <ul className="flex items-center justify-end gap-4 lg:gap-6">
-                {NAV_ITEMS.map((item, index) => {
-                  const hasMega = Boolean(item.megaMenu);
-                  const isOpen = openIndex === index;
-                  return (
-                    <li
-                      key={item.label + item.href}
-                      onMouseEnter={() => {
-                        cancelClose();
-                        if (hasMega) {
-                          setOpenIndex(index);
-                        } else {
-                          setOpenIndex(null);
-                        }
-                      }}
-                    >
-                      <Link
-                        href={item.href}
-                        className={cn(
-                          "inline-flex items-center whitespace-nowrap text-[11px] font-bold uppercase tracking-[0.06em] transition-colors",
-                          "text-neutral-800 hover:text-brand-navy",
-                          isOpen && hasMega && "text-brand-primary",
-                        )}
-                      >
-                        {item.label}
-                        {hasMega ? <NavChevron open={isOpen} /> : null}
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
-            </nav>
-          </div>
+              <div
+                className="relative hidden min-h-0 flex-1 flex-col justify-end md:flex"
+                onMouseLeave={scheduleClose}
+              >
+                <nav aria-label="Main navigation" className="flex justify-end pb-0">
+                  <ul className="flex items-center justify-end gap-4 lg:gap-6">
+                    {NAV_ITEMS.map((item, index) => {
+                      const hasMega = Boolean(item.megaMenu);
+                      const isOpen = openIndex === index;
+                      return (
+                        <li
+                          key={item.label + item.href}
+                          onMouseEnter={() => {
+                            cancelClose();
+                            if (hasMega) {
+                              setOpenIndex(index);
+                            } else {
+                              setOpenIndex(null);
+                            }
+                          }}
+                        >
+                          <Link
+                            href={item.href}
+                            className={cn(
+                              "inline-flex items-center whitespace-nowrap text-[11px] font-bold uppercase tracking-[0.06em] transition-colors",
+                              "text-neutral-800 hover:text-brand-navy",
+                              isOpen && hasMega && "text-brand-primary",
+                            )}
+                          >
+                            {item.label}
+                            {hasMega ? <NavChevron open={isOpen} /> : null}
+                          </Link>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </nav>
+              </div>
+            </>
+          ) : null}
         </div>
 
         {activeMega ? (

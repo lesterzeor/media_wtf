@@ -12,10 +12,12 @@ export type { NewsletterSignupProps } from "@/components/home/types";
 export function NewsletterSignup({ className, idPrefix = "newsletter" }: NewsletterSignupProps) {
   const nameId = `${idPrefix}-name`;
   const emailId = `${idPrefix}-email`;
+  const helpId = `${idPrefix}-help`;
 
   return (
     <form
       className={cn("space-y-3", className)}
+      aria-describedby={helpId}
       onSubmit={(e) => {
         e.preventDefault();
       }}
@@ -46,9 +48,12 @@ export function NewsletterSignup({ className, idPrefix = "newsletter" }: Newslet
           className="w-full rounded border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder:text-neutral-400 focus:border-brand-primary focus:outline-none focus:ring-1 focus:ring-brand-primary"
         />
       </div>
+      <p id={helpId} className="text-xs text-neutral-500">
+        Subscribe is not connected to a mailing service yet — this is a demo form.
+      </p>
       <button
         type="submit"
-        className="w-full rounded bg-neutral-200 py-2.5 text-sm font-semibold text-neutral-800 transition hover:bg-neutral-300"
+        className="w-full rounded bg-neutral-200 py-2.5 text-sm font-semibold text-neutral-800 transition hover:bg-neutral-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2"
       >
         Subscribe
       </button>

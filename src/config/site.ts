@@ -42,6 +42,9 @@ export type NavItem = {
   megaMenu?: MegaMenuData;
 };
 
+/** Set `true` to show main nav + mega menu in `Navbar`. */
+export const NAV_MENU_ENABLED = false;
+
 export const NAV_ITEMS: NavItem[] = [
   {
     label: "Clinical skills",

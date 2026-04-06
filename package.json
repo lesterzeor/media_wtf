@@ -12,6 +12,10 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
+    "test:ct": "cypress run --component",
+    "cypress:open": "cypress open --component",
+    "test:ct:open": "npm run cypress:open",
+    "cypress:generate": "node scripts/generate-cypress-component-tests.mjs",
     "contentful:sync-home-model": "tsx scripts/ensure-home-content-type.ts",
     "contentful:seed-articles": "tsx scripts/seed-demo-articles.ts"
   },
@@ -34,12 +38,15 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^4.7.0",
     "contentful-management": "^12.2.0",
+    "cypress": "^14.5.4",
     "dotenv": "^17.3.1",
     "eslint": "^9",
     "eslint-config-next": "16.2.2",
     "tailwindcss": "^4",
     "tsx": "^4.21.0",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vite": "^6.4.1"
   }
 }

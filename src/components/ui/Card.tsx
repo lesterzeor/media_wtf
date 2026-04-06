@@ -14,14 +14,15 @@ export function Card({ article }: CardProps) {
             className="object-cover"
           />
         ) : (
-          <div className="flex h-full items-center justify-center text-xs text-slate-400" aria-hidden>
-            No image
-          </div>
+          <div className="flex h-full items-center justify-center text-xs text-slate-400">No image</div>
         )}
       </div>
       <div className="flex flex-1 flex-col space-y-3 p-4">
         <h3 className="text-lg font-semibold text-slate-900">
-          <Link href={`/articles/${article.slug}`} className="hover:underline">
+          <Link
+            href={`/articles/${article.slug}`}
+            className="hover:underline focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2"
+          >
             {article.title}
           </Link>
         </h3>
