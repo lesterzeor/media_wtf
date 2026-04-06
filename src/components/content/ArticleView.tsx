@@ -29,8 +29,25 @@ export function ArticleView({ article }: ArticleViewProps) {
             </p>
           )}
         </header>
-        {article.heroImage ? <ContentfulImage image={article.heroImage} priority /> : null}
-        <ArticleBodyPaginated key={article.id} body={article.body} />
+        <ArticleBodyPaginated
+          key={article.id}
+          body={article.body}
+          hero={
+            article.heroImage ? (
+              <figure className="mx-auto w-full max-w-4xl">
+                <div className="relative h-64 w-full overflow-hidden rounded-xl bg-neutral-100 sm:h-80 md:h-96">
+                  <ContentfulImage
+                    fill
+                    image={article.heroImage}
+                    priority
+                    sizes="(max-width: 896px) 100vw, 896px"
+                    className="object-cover"
+                  />
+                </div>
+              </figure>
+            ) : null
+          }
+        />
         <AdRegion region="in-content" />
       </div>
       <aside className="space-y-4" aria-label="Advertisements">

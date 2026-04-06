@@ -2,6 +2,8 @@
  * Hero images for seeded articles — remote JPEG URLs Contentful ingests via Asset `upload`.
  * Images are from **Unsplash** (free to use: https://unsplash.com/license). Attribution in `credit`.
  */
+import { HERO_IMAGE_BY_SLUG_EXTRA_30 } from "./seed-article-hero-images-extra-30";
+
 export type HeroImageSeed = {
   /** Direct image URL (JPEG). `w=1600&q=80` keeps files reasonable for upload processing. */
   uploadUrl: string;
@@ -191,4 +193,24 @@ export const HERO_IMAGE_BY_SLUG: Record<string, HeroImageSeed> = {
     fileName: "hero-smartphone-hand.jpg",
     credit: "Photo by Yura Fresh on Unsplash",
   },
+  /** Spring 2026 entertainment / news tie-in articles */
+  "after-the-2026-oscars-angry-beautiful-argument": {
+    uploadUrl:
+      "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=1600&q=80",
+    fileName: "hero-movie-theater-audience.jpg",
+    credit: "Photo by Felix Mooneeram on Unsplash",
+  },
+  "april-2026-streaming-avalanche-survival-guide": {
+    uploadUrl:
+      "https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?auto=format&fit=crop&w=1600&q=80",
+    fileName: "hero-living-room-tv-remote.jpg",
+    credit: "Photo by Thibault Penin on Unsplash",
+  },
+  "coachella-2026-heat-headliners-desert-still-sells-out": {
+    uploadUrl:
+      "https://images.unsplash.com/photo-1459749411175-04bf5292ceea?auto=format&fit=crop&w=1600&q=80",
+    fileName: "hero-concert-crowd-lights.jpg",
+    credit: "Photo by Simon Noh on Unsplash",
+  },
+  ...HERO_IMAGE_BY_SLUG_EXTRA_30,
 };

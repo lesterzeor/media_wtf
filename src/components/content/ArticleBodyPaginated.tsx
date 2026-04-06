@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { RichText } from "@/components/content/RichText";
 import { paginateArticleBody } from "@/lib/contentful/splitRichTextAtHr";
 import type { Article } from "@/types/content";
@@ -8,9 +8,11 @@ import { cn } from "@/lib/utils";
 
 type ArticleBodyPaginatedProps = {
   body: Article["body"];
+  /** Hero image — only rendered on part 1; hidden on later parts when the body is split by HRs. */
+  hero?: ReactNode;
 };
 
-export function ArticleBodyPaginated({ body }: ArticleBodyPaginatedProps) {
+export function ArticleBodyPaginated({ body, hero }: ArticleBodyPaginatedProps) {
   const { pages, links } = useMemo(() => paginateArticleBody(body), [body]);
   const [pageIndex, setPageIndex] = useState(0);
   /** Tracks last rendered part so we scroll only on real Prev/Next, not first paint. */
@@ -31,13 +33,19 @@ export function ArticleBodyPaginated({ body }: ArticleBodyPaginatedProps) {
   }, [i]);
 
   if (total === 0 || !pages[i]) {
-    return <RichText document={body} />;
+    return (
+      <div className="scroll-mt-24 space-y-6">
+        {hero}
+        <RichText document={body} />
+      </div>
+    );
   }
 
   const pageDocument = links !== undefined ? { json: pages[i], links } : pages[i];
 
   return (
-    <div className="scroll-mt-24">
+    <div className={cn("scroll-mt-24", i === 0 && hero ? "space-y-6" : undefined)}>
+      {i === 0 ? hero : null}
       <RichText document={pageDocument} />
 
       {total > 1 ? (

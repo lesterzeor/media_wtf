@@ -1,4 +1,5 @@
 import type { ArticleSeed } from "./seed-articles-types";
+import { ARTICLE_SEEDS_EXTRA_30 } from "./seed-articles-extra-30";
 
 /**
  * Display names + slugs created in Contentful if missing.
@@ -684,4 +685,136 @@ export const ARTICLE_SEEDS: ArticleSeed[] = [
       },
     ),
   },
+  {
+    title: "After the 2026 Oscars: When the Room Chose the Angry, Beautiful Argument",
+    slug: "after-the-2026-oscars-angry-beautiful-argument",
+    excerpt:
+      "Paul Thomas Anderson’s “One Battle After Another” took Best Picture at the 98th Academy Awards—while Ryan Coogler’s “Sinners” proved genre still owns the cultural weather. Here’s what the split says about the movies we argue over in line for coffee.",
+    categoryKey: "culture",
+    authorName: "Jordan Ellis",
+    lines: L(
+      {
+        t: "p",
+        text: "Every Oscar season pretends to crown “the best.” What it really does is freeze-frame an argument: what kind of story deserves the biggest microphone right now. In 2026, the microphone didn’t go to comfort—it went to friction, spectacle, and directors who refused to whisper.",
+      },
+      {
+        t: "h2",
+        text: "Two kinds of thunder",
+      },
+      {
+        t: "p",
+        text: "On one side: a sprawling, furiously intelligent drama about revolution, inheritance, and the cost of believing the world can still change—carried by a cast willing to look exhausted on screen. On the other: a vampire epic that treated genre as a pressure cooker—scary, sexy, and unapologetically theatrical.",
+      },
+      {
+        t: "p",
+        text: "They aren’t opposites. They’re siblings. Both films ask whether style is a luxury or a weapon. Both understand that “entertainment” isn’t the opposite of “ideas”—it’s how ideas sneak past your defenses when your guard is down.",
+      },
+      { t: "hr" },
+      {
+        t: "h2",
+        text: "Why this mattered beyond the monologue jokes",
+      },
+      {
+        t: "p",
+        text: "Voters didn’t just reward craft—they rewarded nerve. In a year when algorithms flatten everything into the same 42-minute comfort loop, the winners that broke through had edges. You could disagree with them and still feel something in your chest on the walk to the car.",
+      },
+      {
+        t: "quote",
+        lines: [
+          "A great Oscar night isn’t when your favorite wins. It’s when the industry admits it still wants to be dangerous.",
+        ],
+      },
+      {
+        t: "p",
+        text: "If you missed the show, you didn’t miss the point. Stream the speeches later—but watch the films first. The conversation isn’t about trophies; it’s about what we’re willing to stare at in the dark.",
+      },
+    ),
+  },
+  {
+    title: "April 2026’s Streaming Avalanche: How to Survive 150+ Premieres Without Losing Your Weekend",
+    slug: "april-2026-streaming-avalanche-survival-guide",
+    excerpt:
+      "Final seasons, animated spinoffs, revivals, and prestige drops land the same month—here’s a sane way to choose what gets your eyes and what gets a polite skip.",
+    categoryKey: "guides",
+    authorName: "Riley Park",
+    lines: L(
+      {
+        t: "p",
+        text: "April isn’t a month anymore—it’s a menu written in all caps. Streaming platforms are stacking premieres and finales like planes on a runway: superhero epilogues, animated tangents, long-awaited revivals, and the kind of dark comedy that arrives with a trailer that lies just enough to hook you.",
+      },
+      {
+        t: "h2",
+        text: "Rule 1: Pick a lane, not a leaderboard",
+      },
+      {
+        t: "p",
+        text: "You cannot watch everything. Anyone claiming they will is either unemployed or lying. Choose one “big water-cooler” show, one comfort rewatch, and one wild card—something odd enough that if you hate it, you’ll at least have an opinion.",
+      },
+      {
+        t: "h2",
+        text: "Rule 2: Beware the finale fatigue",
+      },
+      {
+        t: "p",
+        text: "Final seasons are emotional blackmail. They know you’ve invested years. That doesn’t mean every ending earns a binge—sometimes the healthiest move is two episodes, water, sleep, and a return when you’re not trying to process your entire personality through a fictional city.",
+      },
+      {
+        t: "h2",
+        text: "Rule 3: Protect your attention like money",
+      },
+      {
+        t: "ul",
+        items: [
+          "Turn off autoplay before it turns you into a hostage.",
+          "Delete the app that opens when you’re bored—not when you’re ready.",
+          "If a show needs three episodes to “get good,” negotiate: episode three is the audition; episode four is the contract.",
+        ],
+      },
+      {
+        t: "p",
+        text: "The goal isn’t purity. It’s walking into May with a few stories you actually remember—not a blur of thumbnails and regret.",
+      },
+    ),
+  },
+  {
+    title: "Coachella 2026: Heat, Headliners, and Why the Desert Still Sells Out",
+    slug: "coachella-2026-heat-headliners-desert-still-sells-out",
+    excerpt:
+      "The festival’s 25th anniversary lineup mixes pop superstars and legacy acts—and passes vanished fast. Here’s what the feed can’t replicate about live music in Indio.",
+    categoryKey: "culture",
+    authorName: "Mara Chen",
+    lines: L(
+      {
+        t: "p",
+        text: "A music festival in 2026 is half sound and half signal. You go for the bass you feel in your ribs, yes—but you also go because being there means you were part of the weekend the internet couldn’t shut up about. Coachella’s latest slate is a case study in that double hunger: global pop, Latin megastars, legacy rock and electronic heroes, and enough newcomers to keep the discovery myth alive.",
+      },
+      {
+        t: "h2",
+        text: "The economics of FOMO",
+      },
+      {
+        t: "p",
+        text: "When passes sell out fast, it’s not only hype—it’s scarcity engineered by demand, weather, and the simple fact that bodies can’t scale like streams. The secondary market becomes a referendum on how badly you need to say you were there when the chorus hit.",
+      },
+      {
+        t: "h2",
+        text: "What doesn’t fit on a clip",
+      },
+      {
+        t: "p",
+        text: "Phones will always flatten a festival into vertical clips. But heat, dust, stranger kindness, bad cell service, and that one song you hear live for the first time—these don’t compress. They’re why people still migrate to the desert even when couch culture is cheaper.",
+      },
+      {
+        t: "quote",
+        lines: [
+          "Festivals sell tickets. What they really rent you is temporary citizenship in a city that only exists for two weekends.",
+        ],
+      },
+      {
+        t: "p",
+        text: "If you’re watching from home, you’re not late—you’re just in a different show. Drink water, wear sunscreen if you go, and remember: the best lineup is the one you can enjoy without turning your bank account into a cautionary tale.",
+      },
+    ),
+  },
+  ...ARTICLE_SEEDS_EXTRA_30,
 ];
