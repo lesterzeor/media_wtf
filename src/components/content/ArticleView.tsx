@@ -33,7 +33,7 @@ export function ArticleView({ article }: ArticleViewProps) {
         <ArticleBodyPaginated key={article.id} body={article.body} />
         <AdRegion region="in-content" />
       </div>
-      <aside className="space-y-4">
+      <aside className="space-y-4" aria-label="Advertisements">
         <AdRegion region="sidebar" />
       </aside>
     </article>

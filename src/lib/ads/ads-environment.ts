@@ -1,11 +1,19 @@
 /**
- * Real ad inventory (GAM fills, no AdSense `data-adtest`) only on Vercel **production** and **preview**.
- * Local `next dev`, `vercel dev`, and any host where `VERCEL_ENV` is not set → test behavior.
- *
  * `NEXT_PUBLIC_VERCEL_ENV` is set at build time in `next.config.ts` from `VERCEL_ENV`.
+ * Unset / local → `development`.
+ */
+
+/** Dimension-labeled placeholders (no AdSense / GPT) everywhere except production. */
+export function shouldUseBoilerplateAds(): boolean {
+  return process.env?.NEXT_PUBLIC_VERCEL_ENV?.trim() !== "production";
+}
+
+/**
+ * Real ad inventory (GAM fills, no AdSense `data-adtest`) only on Vercel **production** and **preview**.
+ * Used by GPT registration — keep in sync with boilerplate: non-prod uses placeholders in `AdRegion` instead.
  */
 export function shouldUseRealAds(): boolean {
-  const v = process.env.NEXT_PUBLIC_VERCEL_ENV?.trim();
+  const v = process.env?.NEXT_PUBLIC_VERCEL_ENV?.trim();
   return v === "production" || v === "preview";
 }
 

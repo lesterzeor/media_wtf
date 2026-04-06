@@ -68,6 +68,9 @@ function extractCategories(raw: RawArticle): Category[] {
 
 type RawHomeItem = {
   internalTitle?: string;
+  mustSeeAmount?: number | null;
+  trendingAmount?: number | null;
+  recommendedSidebarAmount?: number | null;
   featuredMediaArticlesCollection?: { items?: Array<RawArticle | null> };
   todaysHighlightsCollection?: { items?: Array<RawArticle | null> };
   featuredArticle?: RawArticle | null;
@@ -92,6 +95,9 @@ export function mapHome(raw: RawHomeItem | null | undefined): HomeLayout | null 
 
   return {
     internalTitle: raw.internalTitle,
+    mustSeeAmount: raw.mustSeeAmount ?? null,
+    trendingAmount: raw.trendingAmount ?? null,
+    recommendedSidebarAmount: raw.recommendedSidebarAmount ?? null,
     featuredMedia: mapArticleList(raw.featuredMediaArticlesCollection?.items),
     featured: mapArticle(raw.featuredArticle),
     highlights: mapArticleList(raw.todaysHighlightsCollection?.items),

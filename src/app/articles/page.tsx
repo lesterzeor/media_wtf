@@ -21,7 +21,9 @@ export default async function ArticlesPage() {
         <p className="text-slate-600">Stories and resources fetched from Contentful GraphQL.</p>
       </header>
       {loadError ? (
-        <p className="rounded-lg border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900">{loadError}</p>
+        <p role="alert" className="rounded-lg border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900">
+          {loadError}
+        </p>
       ) : null}
       {articles.length === 0 ? (
         <p className="rounded-lg border border-slate-300 bg-white p-4 text-sm text-slate-600">

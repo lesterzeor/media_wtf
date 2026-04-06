@@ -24,7 +24,7 @@ export function TrendingSection({ articles, className }: TrendingSectionProps) {
             <li key={article.id}>
               <Link
                 href={`/articles/${article.slug}`}
-                className="block py-4 text-left transition hover:bg-neutral-50/90"
+                className="block py-4 text-left transition hover:bg-neutral-50/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-primary"
               >
                 {category ? (
                   <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-brand-navy">

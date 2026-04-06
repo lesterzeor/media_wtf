@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Lint / typecheck / CT use committed `gql/` (no Contentful token required in CI).
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Cypress component tests
+        run: npm run test:ct
+
+      # Avoid `npm run build` here: it runs `prebuild` → GraphQL codegen, which needs Contentful env.
+      - name: Build
+        run: npx next build

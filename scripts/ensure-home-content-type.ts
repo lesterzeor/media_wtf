@@ -101,6 +101,35 @@ function featuredMediaArticlesField(): ContentTypeProps["fields"][number] {
   };
 }
 
+function sectionAmountField(
+  id: string,
+  name: string,
+): ContentTypeProps["fields"][number] {
+  return {
+    id,
+    name,
+    type: "Integer",
+    localized: false,
+    required: false,
+    validations: [],
+    disabled: false,
+    omitted: false,
+  };
+}
+
+function sectionAmountFields(): ContentTypeProps["fields"][number][] {
+  return [
+    sectionAmountField("mustSeeAmount", "Must see amount"),
+    sectionAmountField("trendingAmount", "Trending amount"),
+    sectionAmountField("recommendedSidebarAmount", "Recommended sidebar amount"),
+  ];
+}
+
+function hasSectionAmountFields(fields: ContentTypeProps["fields"] | undefined): boolean {
+  const want = new Set(["mustSeeAmount", "trendingAmount", "recommendedSidebarAmount"]);
+  return (fields ?? []).filter((f) => want.has(f.id)).length === 3;
+}
+
 function buildFields() {
   const linkToArticle = {
     linkContentType: [articleTypeId],
@@ -117,6 +146,7 @@ function buildFields() {
       disabled: false,
       omitted: false,
     },
+    ...sectionAmountFields(),
     {
       id: "todaysHighlights",
       name: "Today's highlights",
@@ -288,6 +318,13 @@ async function main() {
     }
     if (!hasFeaturedArticleField(nextFields)) {
       nextFields = [...nextFields, featuredArticleField()];
+    }
+    if (!hasSectionAmountFields(nextFields)) {
+      for (const f of sectionAmountFields()) {
+        if (!nextFields.some((field) => field.id === f.id)) {
+          nextFields = [...nextFields, f];
+        }
+      }
     }
 
     const updated = await client.contentType.update(ctParams, {

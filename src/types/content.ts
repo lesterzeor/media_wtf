@@ -35,6 +35,10 @@ export type Article = {
 /** Curated home layout from Contentful `home` singleton (Option A). */
 export type HomeLayout = {
   internalTitle?: string;
+  /** How many articles to show in each home column section (1–24; unset → app default). */
+  mustSeeAmount?: number | null;
+  trendingAmount?: number | null;
+  recommendedSidebarAmount?: number | null;
   /**
    * Ordered list for `FeaturedMediaGrid` (same order as in Contentful).
    * First 5 slots: 1 large tile + 2×2 grid. When empty, fall back to highlights or latest.

@@ -10,6 +10,7 @@ import {
   GoogleTagManagerNoScript,
   GoogleTagManagerScript,
 } from "@/lib/analytics/GoogleTagManager";
+import { getSiteUrl } from "@/lib/site-url";
 import "./globals.css";
 
 /** Primary UI typeface — matches `font-sans` / body. */
@@ -33,8 +34,13 @@ const merriweather = Merriweather({
 const adsenseClientId = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID?.trim();
 
 export const metadata: Metadata = {
-  title: "MediaWTF",
-  description: "Content-driven publishing scaffold with Contentful GraphQL",
+  metadataBase: new URL(getSiteUrl()),
+  title: {
+    default: "MediaWTF",
+    template: "%s | MediaWTF",
+  },
+  description:
+    "MediaWTF publishes original articles on culture, media, and ideas—news, guides, and stories worth your time.",
   ...(adsenseClientId
     ? {
         other: {

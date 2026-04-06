@@ -38,7 +38,7 @@ type LoadStatus = "pending" | "filled" | "unfilled";
  * so layout does not reserve blank space. Uses `data-ad-status`, iframe presence, and size checks.
  */
 export function AdSenseDisplayUnit({ adSlot, className }: AdSenseDisplayUnitProps) {
-  const client = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID?.trim();
+  const client = process.env?.NEXT_PUBLIC_ADSENSE_CLIENT_ID?.trim();
   const insRef = useRef<HTMLModElement>(null);
   const [status, setStatus] = useState<LoadStatus>("pending");
 

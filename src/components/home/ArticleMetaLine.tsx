@@ -24,7 +24,9 @@ export function ArticleMetaLine({
         <span className={siteClass}>{SITE_NAME}</span>
         {date ? (
           <>
-            <span className={cn("mx-1.5", pipeClass)}>|</span>
+            <span className={cn("mx-1.5", pipeClass)} aria-hidden>
+              |
+            </span>
             <span className={dateClass}>{date}</span>
           </>
         ) : null}
@@ -46,7 +48,11 @@ export function ArticleMetaLine({
   return (
     <p className={cn("text-xs leading-snug", className)}>
       {author ? <span className={authorClass}>{author}</span> : null}
-      {author && date ? <span className={cn("mx-1.5", pipeClass)}>|</span> : null}
+      {author && date ? (
+        <span className={cn("mx-1.5", pipeClass)} aria-hidden>
+          |
+        </span>
+      ) : null}
       {date ? <span className={dateClass}>{date}</span> : null}
     </p>
   );
