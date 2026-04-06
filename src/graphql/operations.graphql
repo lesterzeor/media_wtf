@@ -26,6 +26,8 @@ fragment ArticleCardFields on Article {
     title
     description
   }
+  closingYoutubeUrl
+  closingVideoUrl
   categories {
     ... on Category {
       sys {

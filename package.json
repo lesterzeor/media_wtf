@@ -17,6 +17,7 @@
     "test:ct:open": "npm run cypress:open",
     "cypress:generate": "node scripts/generate-cypress-component-tests.mjs",
     "contentful:sync-home-model": "tsx scripts/ensure-home-content-type.ts",
+    "contentful:sync-article-closing-media": "tsx scripts/ensure-article-closing-media-fields.ts",
     "contentful:seed-articles": "tsx scripts/seed-demo-articles.ts",
     "contentful:seed-articles:extra30": "tsx scripts/seed-demo-articles.ts -- --only-extra-30"
   },

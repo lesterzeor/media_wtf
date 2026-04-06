@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { ArticleClosingMedia } from "@/components/content/ArticleClosingMedia";
 import { RichText } from "@/components/content/RichText";
 import { paginateArticleBody } from "@/lib/contentful/splitRichTextAtHr";
 import type { Article } from "@/types/content";
@@ -10,9 +11,16 @@ type ArticleBodyPaginatedProps = {
   body: Article["body"];
   /** Hero image — only rendered on part 1; hidden on later parts when the body is split by HRs. */
   hero?: ReactNode;
+  closingYoutubeUrl?: Article["closingYoutubeUrl"];
+  closingVideoUrl?: Article["closingVideoUrl"];
 };
 
-export function ArticleBodyPaginated({ body, hero }: ArticleBodyPaginatedProps) {
+export function ArticleBodyPaginated({
+  body,
+  hero,
+  closingYoutubeUrl,
+  closingVideoUrl,
+}: ArticleBodyPaginatedProps) {
   const { pages, links } = useMemo(() => paginateArticleBody(body), [body]);
   const [pageIndex, setPageIndex] = useState(0);
   /** Tracks last rendered part so we scroll only on real Prev/Next, not first paint. */
@@ -32,11 +40,22 @@ export function ArticleBodyPaginated({ body, hero }: ArticleBodyPaginatedProps) 
     }
   }, [i]);
 
+  const isLastPage = total <= 1 || i === total - 1;
+  const showClosingMedia =
+    isLastPage &&
+    (Boolean(closingYoutubeUrl?.trim()) || Boolean(closingVideoUrl?.trim()));
+
   if (total === 0 || !pages[i]) {
     return (
       <div className="scroll-mt-24 space-y-6">
         {hero}
         <RichText document={body} />
+        {showClosingMedia ? (
+          <ArticleClosingMedia
+            closingYoutubeUrl={closingYoutubeUrl}
+            closingVideoUrl={closingVideoUrl}
+          />
+        ) : null}
       </div>
     );
   }
@@ -47,6 +66,12 @@ export function ArticleBodyPaginated({ body, hero }: ArticleBodyPaginatedProps) 
     <div className={cn("scroll-mt-24", i === 0 && hero ? "space-y-6" : undefined)}>
       {i === 0 ? hero : null}
       <RichText document={pageDocument} />
+      {showClosingMedia ? (
+        <ArticleClosingMedia
+          closingYoutubeUrl={closingYoutubeUrl}
+          closingVideoUrl={closingVideoUrl}
+        />
+      ) : null}
 
       {total > 1 ? (
         <nav

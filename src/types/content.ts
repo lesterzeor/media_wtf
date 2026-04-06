@@ -29,6 +29,10 @@ export type Article = {
   heroImage?: ContentImage;
   /** Rich text document + link resolution data, or a legacy plain document object. */
   body?: ArticleBodyRichText | unknown;
+  /** Shown only on the last paginated body segment (plain URL fields in Contentful). */
+  closingYoutubeUrl?: string;
+  /** Direct video file URL (e.g. mp4) — plain text, not an Asset upload. */
+  closingVideoUrl?: string;
   categories: Category[];
 };
 
