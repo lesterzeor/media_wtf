@@ -13,8 +13,16 @@
  * Usage:
  *   npm run contentful:seed-articles
  *   npm run contentful:seed-articles -- --dry-run
- *   npm run contentful:seed-articles -- --limit 5
  *   npm run contentful:seed-articles -- --force
+ *
+ * **The 30 long-form articles** (`scripts/seed-articles-extra-30.ts`) are appended **after** the original
+ * roster in `ARTICLE_SEEDS`. `--limit N` always takes the **first N** entries of the full list—so
+ * `--limit 3` never touches those 30. To seed only them, use **`--only-extra-30`** (or `--offset` below).
+ *
+ *   npm run contentful:seed-articles -- --only-extra-30
+ *   npm run contentful:seed-articles -- --only-extra-30 --force
+ *   npm run contentful:seed-articles -- --offset 33 --limit 30   # same 30 via full-list indices (33+30 = 63)
+ *   npm run contentful:seed-articles -- --limit 5                # first 5 articles in the combined list only
  *
  * `--dry-run` lists planned slugs locally (no API). `--force` updates and republishes existing slugs.
  * Hero images: Unsplash URLs in `seed-article-hero-images.ts` → Contentful Assets → `heroImage` link.
@@ -25,6 +33,7 @@ import type { Environment } from "contentful-management";
 import { config } from "dotenv";
 import { resolve } from "node:path";
 import { ARTICLE_SEEDS, CATEGORY_DEFS } from "./seed-articles-data";
+import { ARTICLE_SEEDS_EXTRA_30 } from "./seed-articles-extra-30";
 import { HERO_IMAGE_BY_SLUG, type HeroImageSeed } from "./seed-article-hero-images";
 import { linesToRichTextDocument } from "./seed-articles-rich-text";
 import type { ArticleSeed } from "./seed-articles-types";
@@ -50,18 +59,43 @@ const authorTypeId = process.env.CONTENTFUL_AUTHOR_CONTENT_TYPE_ID?.trim() || "a
 
 function parseArgs() {
   const argv = process.argv.slice(2);
+  const numAfter = (flag: string): number | undefined => {
+    const i = argv.indexOf(flag);
+    if (i === -1 || argv[i + 1] === undefined) {
+      return undefined;
+    }
+    const n = Number.parseInt(argv[i + 1], 10);
+    return Number.isFinite(n) && n >= 0 ? n : undefined;
+  };
   return {
     dryRun: argv.includes("--dry-run"),
     force: argv.includes("--force"),
+    onlyExtra30: argv.includes("--only-extra-30"),
     limit: (() => {
-      const i = argv.indexOf("--limit");
-      if (i === -1 || argv[i + 1] === undefined) {
-        return undefined;
-      }
-      const n = Number.parseInt(argv[i + 1], 10);
-      return Number.isFinite(n) && n > 0 ? n : undefined;
+      const n = numAfter("--limit");
+      return n !== undefined && n > 0 ? n : undefined;
     })(),
+    offset: numAfter("--offset"),
   };
+}
+
+/** Resolves which seeds to process (order matters: `--only-extra-30` vs full list vs `--offset`/`--limit`). */
+function resolveArticleSeeds(args: {
+  onlyExtra30: boolean;
+  limit?: number;
+  offset?: number;
+}): ArticleSeed[] {
+  const { onlyExtra30, limit, offset } = args;
+  if (onlyExtra30) {
+    const pool = [...ARTICLE_SEEDS_EXTRA_30];
+    const start = offset ?? 0;
+    const end = limit !== undefined ? start + limit : undefined;
+    return pool.slice(start, end);
+  }
+  const pool = [...ARTICLE_SEEDS];
+  const start = offset ?? 0;
+  const end = limit !== undefined ? start + limit : undefined;
+  return pool.slice(start, end);
 }
 
 function linkEntry(id: string) {
@@ -274,12 +308,29 @@ function sleep(ms: number) {
 }
 
 async function main() {
-  const { dryRun, force, limit } = parseArgs();
+  const { dryRun, force, limit, offset, onlyExtra30 } = parseArgs();
 
-  const seeds = limit !== undefined ? ARTICLE_SEEDS.slice(0, limit) : [...ARTICLE_SEEDS];
+  const seeds = resolveArticleSeeds({ onlyExtra30, limit, offset });
 
+  const longFormStartIndex = ARTICLE_SEEDS.length - ARTICLE_SEEDS_EXTRA_30.length;
   if (dryRun) {
-    console.log(`Dry run — ${seeds.length} article(s) (no API calls). Remove --dry-run after configuring .env.local.\n`);
+    console.log(
+      `Dry run — ${seeds.length} article(s) (no API calls). Remove --dry-run after configuring .env.local.`,
+    );
+    if (onlyExtra30) {
+      console.log("Mode: --only-extra-30 (long-form batch from seed-articles-extra-30.ts only).");
+    } else if (limit !== undefined || offset !== undefined) {
+      console.log(
+        `Mode: slice of full list — offset=${offset ?? 0}, limit=${limit ?? "end"}. Long-form extras start at index ${longFormStartIndex} (${ARTICLE_SEEDS_EXTRA_30.length} slugs).`,
+      );
+      const sliceEnd = (offset ?? 0) + seeds.length;
+      if (sliceEnd <= longFormStartIndex) {
+        console.warn(
+          `This slice does not include the long-form batch. Use: npm run contentful:seed-articles -- --dry-run --only-extra-30`,
+        );
+      }
+    }
+    console.log("");
     for (const s of seeds) {
       console.log(`  ${s.slug.padEnd(42)} [${s.categoryKey}] ${s.title}`);
     }
@@ -297,8 +348,24 @@ async function main() {
   }
 
   console.log(
-    `Seeding ${seeds.length} article(s)${force ? " (--force)" : ""} → locale ${locale}, env ${environmentId}\n`,
+    `Seeding ${seeds.length} article(s)${force ? " (--force)" : ""} → locale ${locale}, env ${environmentId}`,
   );
+  if (onlyExtra30) {
+    console.log("Mode: --only-extra-30 (long-form batch from seed-articles-extra-30.ts).\n");
+  } else if (limit !== undefined || offset !== undefined) {
+    console.log(
+      `Mode: full-list slice — offset=${offset ?? 0}, limit=${limit ?? "end"}. Long-form extras start at index ${longFormStartIndex}.`,
+    );
+    const sliceEnd = (offset ?? 0) + seeds.length;
+    if (sliceEnd <= longFormStartIndex) {
+      console.warn(
+        `This slice does not reach the ${ARTICLE_SEEDS_EXTRA_30.length} long-form articles. Re-run with: npm run contentful:seed-articles -- --only-extra-30`,
+      );
+    }
+    console.log("");
+  } else {
+    console.log("");
+  }
 
   const client = createClient({ accessToken: token }, { type: "legacy" });
   const space = await client.getSpace(spaceId);
@@ -323,27 +390,45 @@ async function main() {
   let created = 0;
   let updated = 0;
   let skipped = 0;
+  let failed = 0;
 
   for (const seed of seeds) {
     const catId = categoryIds.get(seed.categoryKey);
     const authId = authorIds.get(seed.authorName);
     if (!catId || !authId) {
       console.error(`Missing category or author for ${seed.slug}`);
-      process.exit(1);
+      failed += 1;
+      continue;
     }
 
-    const result = await upsertArticle(environment, seed, catId, authId, force);
-    if (result === "created") {
-      created += 1;
-    } else if (result === "updated") {
-      updated += 1;
-    } else {
-      skipped += 1;
+    try {
+      const result = await upsertArticle(environment, seed, catId, authId, force);
+      if (result === "created") {
+        created += 1;
+      } else if (result === "updated") {
+        updated += 1;
+      } else {
+        skipped += 1;
+      }
+    } catch (err) {
+      failed += 1;
+      const detail =
+        err && typeof err === "object" && "message" in err
+          ? String((err as { message: unknown }).message)
+          : String(err);
+      console.error(`\nError (${seed.slug}): ${detail}`);
+      if (err instanceof Error && err.stack) {
+        console.error(err.stack);
+      }
     }
     await sleep(120);
   }
 
-  console.log(`\nDone. created=${created} updated=${updated} skipped=${skipped}`);
+  console.log(`\nDone. created=${created} updated=${updated} skipped=${skipped} failed=${failed}`);
+  if (failed > 0) {
+    console.error("Fix errors above and re-run (existing slugs skip unless --force).");
+    process.exitCode = 1;
+  }
   console.log("Delivery API / the site may take a minute to show new entries.");
 }
 
